@@ -299,3 +299,26 @@ def test_activation_failure_leaves_previous_pointer_usable(
 
     assert datasets.status("synthetic", "fixture").release == "v1"
     assert not datasets.store.version_path("synthetic", "fixture", "v2").exists()
+
+
+def test_air_gapped_import_rejects_symlinks(tmp_path: Path) -> None:
+    outside = tmp_path / "outside.txt"
+    outside.write_text("do-not-import", encoding="utf-8")
+    source = tmp_path / "airgap-links"
+    source.mkdir()
+    source.joinpath("linked.txt").symlink_to(outside)
+    datasets = DatasetManager(
+        store=DatasetStore(tmp_path / "store"),
+        definitions=(definition(),),
+    )
+
+    with pytest.raises(DatasetValidationError, match="unsupported symlink"):
+        datasets.import_dataset(
+            "synthetic",
+            "fixture",
+            source,
+            release="linked",
+        )
+
+    with pytest.raises(DatasetNotInstalledError):
+        datasets.status("synthetic", "fixture")
