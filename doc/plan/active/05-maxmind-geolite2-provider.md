@@ -1,6 +1,6 @@
 # Plan 05 — MaxMind GeoLite2 Provider
 
-**Status:** Queue  
+**Status:** Active  
 **Depends on:** Plans 01–02
 
 ## Objective
@@ -18,24 +18,22 @@ Implement GeoLite2 as an independent ASN/geography provider and validate cross-p
 - attribution metadata,
 - conflict comparison with IPinfo.
 
-## Mandatory retention behavior
+## Retention responsibility
 
 Current GeoLite terms require old GeoLite database/data versions to cease use and be destroyed within 30 days following release of an updated database.
 
 The adapter/lifecycle policy must therefore:
 
-- not support indefinite GeoLite snapshot retention,
-- expose the provider-specific destruction deadline,
-- remove obsolete versions within the required window,
-- preserve reproducibility through result provenance/version/hash rather than assuming the source database can be retained forever,
-- avoid a generic `retain_versions` setting that could violate provider terms.
+- explain the 30-day destruction deadline in documentation and metadata guidance,
+- leave deletion of old snapshots to the operator, as explicitly requested,
+- preserve reproducibility through result provenance/version/hash after the operator removes old data.
 
 Terms must be revalidated at implementation time.
 
 ## Exit criteria
 
 - offline ASN lookup works for IPv4/IPv6,
-- update path enforces provider-specific retention constraints,
+- update path preserves old snapshots and documents the operator's destruction duty,
 - attribution/license metadata is surfaced,
 - cross-provider disagreement is preserved and resolved by policy,
 - CI passes.
