@@ -133,4 +133,4 @@ A consumer such as Anomaly-Detections may use IPFacet to obtain factual context 
 - Plan 06: batch/dataframe performance — complete
 - Plan 07: consumer integration and V1 hardening — complete
 - Plan 08: release validation and consumer pilot readiness — complete
-- Plan 09: operator dataset validation — active
+- Plan 09: operator dataset validation — complete

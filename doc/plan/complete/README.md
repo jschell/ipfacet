@@ -13,3 +13,4 @@ Plans move here only after their exit criteria are satisfied and CI passes.
 - [06 — Batch and DataFrame Performance](06-batch-dataframe-performance.md)
 - [07 — Consumer Integration and V1 Hardening](07-consumer-integration-v1.md)
 - [08 — Release Validation and Consumer Pilot Readiness](08-release-validation.md)
+- [09 — Operator Dataset Validation](09-operator-dataset-validation.md)
