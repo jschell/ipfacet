@@ -67,6 +67,10 @@ def _manifest_dict(manifest: DatasetManifest) -> dict[str, object]:
             "algorithm": manifest.integrity_algorithm,
             "value": manifest.integrity_value,
         },
+        "source_integrity": {
+            "algorithm": manifest.source_integrity_algorithm,
+            "value": manifest.source_integrity_value,
+        },
         "adapter_version": manifest.adapter_version,
         "license_reference": manifest.license_reference,
         "attribution": manifest.attribution,
@@ -81,6 +85,7 @@ def _manifest_dict(manifest: DatasetManifest) -> dict[str, object]:
 def _manifest_from_dict(value: dict[str, object]) -> DatasetManifest:
     integrity = cast(dict[str, object], value["integrity"])
     retention = cast(dict[str, object], value["retention"])
+    source_integrity = cast(dict[str, object], value.get("source_integrity", {}))
     activated = value.get("activated_at")
     return DatasetManifest(
         schema_version=int(cast(int, value["schema_version"])),
@@ -94,6 +99,12 @@ def _manifest_from_dict(value: dict[str, object]) -> DatasetManifest:
         dataset_format=str(value["format"]),
         integrity_algorithm=str(integrity["algorithm"]),
         integrity_value=str(integrity["value"]),
+        source_integrity_algorithm=(
+            None if source_integrity.get("algorithm") is None else str(source_integrity["algorithm"])
+        ),
+        source_integrity_value=(
+            None if source_integrity.get("value") is None else str(source_integrity["value"])
+        ),
         adapter_version=str(value["adapter_version"]),
         license_reference=str(value["license_reference"]),
         attribution=None if value.get("attribution") is None else str(value["attribution"]),
