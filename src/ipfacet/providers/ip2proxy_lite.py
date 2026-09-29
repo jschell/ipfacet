@@ -62,7 +62,7 @@ IP2PROXY_LITE_DEFINITION = DatasetDefinition(
     license_reference=IP2PROXY_LITE_LICENSE,
     attribution=IP2PROXY_LITE_ATTRIBUTION,
     retention=RetentionPolicy(retain_previous_versions=True),
-    stale_after_days=31,
+    stale_after_days=16,
 )
 
 _IPV4_MAPPED_BASE = 0xFFFF << 32
@@ -407,10 +407,13 @@ def _parse_record(row: list[str]) -> _PX8Record:
         last_seen = _optional_int(row[12])
         if last_seen is not None and last_seen < 0:
             raise ValueError("negative last_seen")
+        proxy_type = _optional_text(row[2])
+        if proxy_type is not None and proxy_type != "PUB":
+            raise ValueError("unexpected LITE proxy type")
         return _PX8Record(
             ip_from=ip_from,
             ip_to=ip_to,
-            proxy_type=_optional_text(row[2]),
+            proxy_type=proxy_type,
             country_code=_optional_text(row[3]),
             country_name=_optional_text(row[4]),
             region_name=_optional_text(row[5]),
