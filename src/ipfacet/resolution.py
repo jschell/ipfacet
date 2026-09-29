@@ -14,13 +14,13 @@ from ipfacet.models import (
     IPEnrichment,
     IPScope,
     ProviderFieldStatus,
-    ResolvedField,
     ResolutionReason,
+    ResolvedField,
 )
 from ipfacet.provider import (
-    FIELD_CAPABILITY,
     Capability,
     EnrichmentProvider,
+    FIELD_CAPABILITY,
     ProviderObservation,
     ProviderResult,
 )
