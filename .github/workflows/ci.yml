@@ -24,10 +24,7 @@ jobs:
       - name: Check lockfile
         run: uv lock --check
       - name: Ruff lint
-        run: |
-          uv run --frozen ruff check --fix src/ipfacet/providers/__init__.py
-          git diff -- src/ipfacet/providers/__init__.py
-          exit 1
+        run: uv run --frozen ruff check .
       - name: Ruff format
         run: uv run --frozen ruff format --check .
       - name: Pyright
