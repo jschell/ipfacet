@@ -9,7 +9,6 @@ from pathlib import Path
 
 from ipfacet import __version__
 from ipfacet.dataset_manager import DatasetManager
-from ipfacet.datasets import DatasetDefinition, RetentionPolicy
 from ipfacet.exceptions import DatasetError
 
 
@@ -69,14 +68,7 @@ def build_parser() -> argparse.ArgumentParser:
     imported.add_argument("dataset")
     imported.add_argument("source", type=Path)
     imported.add_argument("--release", required=True)
-    imported.add_argument("--format", required=True, dest="dataset_format")
-    imported.add_argument("--adapter-version", required=True)
-    imported.add_argument("--license-reference", required=True)
-    imported.add_argument("--attribution")
     imported.add_argument("--source-reference", default="manual-import")
-    imported.add_argument("--stale-after-days", type=int)
-    imported.add_argument("--no-retain-previous", action="store_true")
-    imported.add_argument("--max-retained-versions", type=int)
     return parser
 
 
@@ -119,24 +111,11 @@ def main(argv: Sequence[str] | None = None, *, manager: DatasetManager | None = 
                 )
             )
         elif args.dataset_command == "import":
-            retention = RetentionPolicy(
-                retain_previous_versions=not args.no_retain_previous,
-                max_retained_versions=args.max_retained_versions,
-            )
-            definition = DatasetDefinition(
-                provider=args.provider,
-                dataset=args.dataset,
-                dataset_format=args.dataset_format,
-                adapter_version=args.adapter_version,
-                license_reference=args.license_reference,
-                attribution=args.attribution,
-                retention=retention,
-                stale_after_days=args.stale_after_days,
-            )
             print(
                 _manifest_json(
                     dataset_manager.import_dataset(
-                        definition,
+                        args.provider,
+                        args.dataset,
                         args.source,
                         release=args.release,
                         source_reference=args.source_reference,
