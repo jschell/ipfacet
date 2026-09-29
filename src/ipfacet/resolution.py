@@ -13,6 +13,7 @@ from ipfacet.models import (
     IPAddress,
     IPEnrichment,
     IPScope,
+    NetworkTrait,
     ProviderFieldStatus,
     ResolutionReason,
     ResolvedField,
@@ -122,15 +123,15 @@ class ProviderResolver:
             self._validate_result(provider, result, ip)
             results[name] = result
 
-        scalar: dict[CanonicalField, ResolvedField[int] | ResolvedField[str]] = {}
+        scalar: dict[CanonicalField, ResolvedField[int | str]] = {}
         explanations: list[FieldExplanation] = []
         for field in CanonicalField:
             resolved, explanation = self._resolve_field(field, results)
             scalar[field] = resolved
             explanations.append(explanation)
 
-        trait_observations: list[FieldObservation] = []
-        traits = set()
+        trait_observations: list[FieldObservation[NetworkTrait]] = []
+        traits: set[NetworkTrait] = set()
         for name in sorted(results):
             provider = self._providers[name]
             if Capability.NETWORK_TRAITS not in provider.capabilities:
@@ -210,7 +211,7 @@ class ProviderResolver:
         self,
         field: CanonicalField,
         results: dict[str, ProviderResult],
-    ) -> tuple[ResolvedField[int] | ResolvedField[str], FieldExplanation]:
+    ) -> tuple[ResolvedField[int | str], FieldExplanation]:
         capability = FIELD_CAPABILITY[field]
         order = self._policy.providers_for(field)
         statuses: list[ProviderFieldStatus] = []
@@ -278,18 +279,18 @@ class ProviderResolver:
             message = "; ".join(
                 f"{status.provider}: {status.error}" for status in errors if status.error
             )
-            resolved = ResolvedField[int](
+            resolved = ResolvedField[int | str](
                 state=FieldState.LOOKUP_ERROR,
                 error=message,
             )
             state = FieldState.LOOKUP_ERROR
             reason = ResolutionReason.LOOKUP_ERROR
         elif any(status.state is FieldState.NOT_FOUND for status in statuses):
-            resolved = ResolvedField[int](state=FieldState.NOT_FOUND)
+            resolved = ResolvedField[int | str](state=FieldState.NOT_FOUND)
             state = FieldState.NOT_FOUND
             reason = ResolutionReason.NOT_FOUND
         else:
-            resolved = ResolvedField[int](state=FieldState.UNSUPPORTED)
+            resolved = ResolvedField[int | str](state=FieldState.UNSUPPORTED)
             state = FieldState.UNSUPPORTED
             reason = ResolutionReason.UNSUPPORTED
 
@@ -302,7 +303,7 @@ class ProviderResolver:
         )
 
     @staticmethod
-    def _as_int(value: ResolvedField[int] | ResolvedField[str]) -> ResolvedField[int]:
+    def _as_int(value: ResolvedField[int | str]) -> ResolvedField[int]:
         if value.value is not None and (
             not isinstance(value.value, int) or isinstance(value.value, bool)
         ):
@@ -320,7 +321,7 @@ class ProviderResolver:
         )
 
     @staticmethod
-    def _as_str(value: ResolvedField[int] | ResolvedField[str]) -> ResolvedField[str]:
+    def _as_str(value: ResolvedField[int | str]) -> ResolvedField[str]:
         if value.value is not None and not isinstance(value.value, str):
             raise TypeError("resolved string field must be a string")
         return ResolvedField(
