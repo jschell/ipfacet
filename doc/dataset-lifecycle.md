@@ -37,12 +37,13 @@ Every installed snapshot records:
 - acquired and activated timestamps,
 - dataset format,
 - local SHA-256 snapshot integrity,
+- provider/source checksum metadata when the acquisition helper has verified it,
 - adapter/schema version,
 - license reference and attribution,
 - provider retention constraints,
 - staleness threshold when defined.
 
-Manifests intentionally contain no credentials. Provider acquisition helpers receive credentials through external mechanisms such as environment variables; the generic manager has no credential persistence API.
+Provider-published archive/source checksums are distinct from the installed-tree SHA-256. A provider acquisition helper must verify a published checksum before returning it as source-integrity metadata; the generic manager never assumes an archive hash equals the normalized installed snapshot hash.\n\nManifests intentionally contain no credentials. Provider acquisition helpers receive credentials through external mechanisms such as environment variables; the generic manager has no credential persistence API.
 
 ## Retention and rollback
 
