@@ -75,8 +75,8 @@ class UrllibDownloadTransport:
                 with destination.open("wb") as output:
                     shutil.copyfileobj(response, output)
                 return DownloadMetadata(last_modified=response.headers.get("Last-Modified"))
-        except (urllib.error.URLError, TimeoutError, OSError) as exc:
-            raise DatasetError("IPinfo Lite database download failed") from exc
+        except (urllib.error.URLError, TimeoutError, OSError):
+            raise DatasetError("IPinfo Lite database download failed") from None
 
 
 class IPinfoLiteAcquirer:
@@ -149,6 +149,7 @@ class IPinfoLiteValidator:
         if first is None:
             raise DatasetValidationError("IPinfo Lite CSV contains no data rows")
         _parse_record(first)
+        IPinfoLiteCSVProvider(path, version=manifest.release)
 
 
 @dataclass(frozen=True, slots=True)
@@ -261,7 +262,8 @@ class IPinfoLiteCSVProvider:
                         raise DatasetValidationError(
                             "IPinfo Lite CSV row has unexpected field count"
                         )
-                    network = ip_network(row[0], strict=False)
+                    record = _parse_record(dict(zip(IPINFO_LITE_SCHEMA, row, strict=True)))
+                    network = ip_network(record.network, strict=False)
                     index.add(network, offset)
         except (OSError, UnicodeError, csv.Error, ValueError) as exc:
             if isinstance(exc, DatasetValidationError):
