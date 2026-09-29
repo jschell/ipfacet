@@ -1,6 +1,6 @@
 # Plan 00 — Foundation and Canonical API
 
-**Status:** Active
+**Status:** Complete
 
 ## Objective
 
@@ -62,3 +62,20 @@ Network characteristics must support multiple traits rather than one mutually ex
 - public API is typed and documented.
 - no provider-specific implementation leaks into canonical models.
 - CI runs all required checks.
+
+
+## Completion record
+
+Completed on the Plan 00 implementation branch after the frozen-lock CI run passed.
+
+Validation:
+
+- `uv sync --frozen --dev` — pass
+- `uv lock --check` — pass
+- Ruff lint — pass
+- Ruff format — pass
+- strict Pyright — 0 errors, 0 warnings
+- pytest — 28 passed
+- `uv build` — pass
+- canonical serialization regression test — pass
+- no real provider data/network dependency introduced
