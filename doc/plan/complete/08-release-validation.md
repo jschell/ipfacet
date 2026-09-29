@@ -1,6 +1,6 @@
 # Plan 08 — Release Validation and Consumer Pilot Readiness
 
-**Status:** Active  
+**Status:** Complete  
 **Depends on:** Plans 00–07
 
 ## Objective
