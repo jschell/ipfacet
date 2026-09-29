@@ -26,7 +26,10 @@ jobs:
       - name: Ruff lint
         run: uv run --frozen ruff check .
       - name: Ruff format
-        run: uv run --frozen ruff format --check .
+        run: |
+          uv run --frozen ruff format src/ipfacet/resolution.py
+          git diff -- src/ipfacet/resolution.py
+          exit 1
       - name: Pyright
         run: uv run --frozen pyright
       - name: Tests
