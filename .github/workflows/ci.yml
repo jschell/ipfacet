@@ -10,7 +10,19 @@ permissions:
 
 jobs:
   quality:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            python: "3.12"
+          - os: ubuntu-latest
+            python: "3.13"
+          - os: macos-latest
+            python: "3.12"
+          - os: windows-latest
+            python: "3.12"
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: astral-sh/setup-uv@bec219d24cd3e171d82865faccec33120bb574f4 # v10.1.0
@@ -18,9 +30,9 @@ jobs:
           enable-cache: true
           version: "0.12.19"
       - name: Set up Python
-        run: uv python install 3.12
+        run: uv python install ${{ matrix.python }}
       - name: Sync locked environment
-        run: uv sync --frozen --dev
+        run: uv sync --frozen --dev --python ${{ matrix.python }}
       - name: Check lockfile
         run: uv lock --check
       - name: Ruff lint
@@ -34,9 +46,7 @@ jobs:
       - name: Build
         run: uv build
       - name: Install built wheel in clean environment
-        run: |
-          uv venv --python 3.12 "$RUNNER_TEMP/ipfacet-wheel"
-          uv pip install --python "$RUNNER_TEMP/ipfacet-wheel/bin/python" dist/*.whl
-          cd "$RUNNER_TEMP"
-          "$RUNNER_TEMP/ipfacet-wheel/bin/python" -c 'import importlib.metadata, ipfacet; assert importlib.metadata.version("ipfacet") == "1.0.0rc1"; assert ipfacet.open_database().lookup("192.0.2.1").scope is ipfacet.IPScope.DOCUMENTATION'
-          "$RUNNER_TEMP/ipfacet-wheel/bin/ipfacet" --version
+        run: uv run --frozen python scripts/smoke_wheel.py
+      - name: Install optional DataFrame extras independently
+        if: matrix.os == 'ubuntu-latest' && matrix.python == '3.13'
+        run: uv run --frozen python scripts/smoke_wheel.py --extras

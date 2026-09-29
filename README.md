@@ -64,6 +64,7 @@ explanation = result.explain("asn")
 Provider registration order does not select winners; the field policy does. Conflicting present values preserve all observations and select according to policy. Missing, unsupported, and lookup-error states remain distinguishable in the explanation trace.
 
 See the [offline notebook integration](doc/consumer-notebook.md) for a complete provider-backed example with installation, policy, batch enrichment, and derived relationship state.
+The [Anomaly-Detections pilot](doc/consumer-pilot.md) maps IPFacet facts into that package's engagement-scoped derived state without adding a dependency to either package yet.
 
 For telemetry tables, `enrich_frame(db, frame, ip_column="source_ip")` supports Polars,
 Pandas, and PyArrow through optional extras, deduplicates IPs before provider lookup,
