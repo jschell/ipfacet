@@ -16,11 +16,11 @@ from ipfacet.providers.ipinfo_lite import (
 )
 
 __all__ = [
+    "IPINFO_LITE_DEFINITION",
     "IP2PROXY_LITE_DEFINITION",
     "IP2ProxyLiteAcquirer",
     "IP2ProxyLitePX8Provider",
     "IP2ProxyLiteValidator",
-    "IPINFO_LITE_DEFINITION",
     "IPinfoLiteAcquirer",
     "IPinfoLiteCSVProvider",
     "IPinfoLiteValidator",
