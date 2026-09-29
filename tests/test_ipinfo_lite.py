@@ -9,6 +9,7 @@ import pytest
 
 from ipfacet import (
     CanonicalField,
+    Capability,
     DatasetError,
     DatasetManager,
     DatasetStore,
@@ -172,7 +173,6 @@ def test_acquirer_downloads_decompresses_and_never_persists_token(tmp_path: Path
     assert manifest.release.startswith("2026-09-28-")
     assert manifest.source == IPINFO_LITE_DOWNLOAD_URL
     assert manifest.source_integrity_algorithm == "sha256"
-    assert token not in (tmp_path / "datasets/ipinfo/ipinfo-lite").read_text(errors="ignore") if False else True
     manifest_text = (
         manager.store.version_path(IPINFO_LITE_PROVIDER, IPINFO_LITE_DATASET, manifest.release)
         / "manifest.json"
@@ -217,20 +217,12 @@ def test_manual_import_opens_active_snapshot_fully_offline(tmp_path: Path) -> No
     assert result.observation(CanonicalField.ASN).value == 13335
 
 
-def test_definition_does_not_claim_paid_lite_capabilities() -> None:
-    path_fields = {
-        CanonicalField.REGION,
-        CanonicalField.CITY,
-        CanonicalField.TIMEZONE,
-        CanonicalField.ISP,
-    }
-    assert path_fields.isdisjoint(
-        {
-            CanonicalField.REGION
-            for capability in IPinfoLiteCSVProvider.capabilities
-            if capability.value in {"region", "city", "timezone", "isp", "network_traits"}
-        }
-    )
+def test_provider_does_not_claim_paid_lite_capabilities() -> None:
+    assert Capability.REGION not in IPinfoLiteCSVProvider.capabilities
+    assert Capability.CITY not in IPinfoLiteCSVProvider.capabilities
+    assert Capability.TIMEZONE not in IPinfoLiteCSVProvider.capabilities
+    assert Capability.ISP not in IPinfoLiteCSVProvider.capabilities
+    assert Capability.NETWORK_TRAITS not in IPinfoLiteCSVProvider.capabilities
 
 
 def _manifest(tmp_path: Path):
