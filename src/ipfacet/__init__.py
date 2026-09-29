@@ -1,6 +1,18 @@
 """Provider-neutral offline IP enrichment."""
 
 from ipfacet.api import Database, LookupBackend, open_database
+from ipfacet.credentials import environment_credentials
+from ipfacet.dataset_manager import DatasetManager
+from ipfacet.dataset_store import DatasetStore, default_data_dir
+from ipfacet.datasets import (
+    AcquisitionMethod,
+    AcquiredDataset,
+    DatasetAcquirer,
+    DatasetDefinition,
+    DatasetManifest,
+    DatasetValidator,
+    RetentionPolicy,
+)
 from ipfacet.exceptions import (
     DatasetError,
     DatasetNotInstalledError,
@@ -34,12 +46,20 @@ from ipfacet.resolution import FieldPrecedence, ResolutionPolicy
 from ipfacet.scope import classify_scope, parse_ip
 
 __all__ = [
+    "AcquiredDataset",
+    "AcquisitionMethod",
     "CanonicalField",
     "Capability",
     "Database",
+    "DatasetAcquirer",
+    "DatasetDefinition",
     "DatasetError",
+    "DatasetManager",
+    "DatasetManifest",
     "DatasetNotInstalledError",
+    "DatasetStore",
     "DatasetValidationError",
+    "DatasetValidator",
     "EnrichmentProvider",
     "FieldExplanation",
     "FieldObservation",
@@ -61,7 +81,10 @@ __all__ = [
     "ResolutionPolicy",
     "ResolutionReason",
     "ResolvedField",
+    "RetentionPolicy",
     "classify_scope",
+    "default_data_dir",
+    "environment_credentials",
     "open_database",
     "parse_ip",
 ]
