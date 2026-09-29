@@ -37,7 +37,9 @@ def _safe_component(value: str) -> str:
 def snapshot_hash(path: Path) -> str:
     """Hash relative names and file contents for a deterministic snapshot digest."""
     digest = hashlib.sha256()
-    files = sorted(item for item in path.rglob("*") if item.is_file() and item.name != "manifest.json")
+    files = sorted(
+        item for item in path.rglob("*") if item.is_file() and item.name != "manifest.json"
+    )
     for item in files:
         relative = item.relative_to(path).as_posix().encode()
         digest.update(len(relative).to_bytes(8, "big"))
@@ -57,7 +59,9 @@ def _manifest_dict(manifest: DatasetManifest) -> dict[str, object]:
         "source": manifest.source,
         "acquisition_method": manifest.acquisition_method.value,
         "acquired_at": manifest.acquired_at.isoformat(),
-        "activated_at": None if manifest.activated_at is None else manifest.activated_at.isoformat(),
+        "activated_at": (
+            None if manifest.activated_at is None else manifest.activated_at.isoformat()
+        ),
         "format": manifest.dataset_format,
         "integrity": {
             "algorithm": manifest.integrity_algorithm,
@@ -100,7 +104,9 @@ def _manifest_from_dict(value: dict[str, object]) -> DatasetManifest:
             else int(cast(int, retention["max_retained_versions"]))
         ),
         stale_after_days=(
-            None if value.get("stale_after_days") is None else int(cast(int, value["stale_after_days"]))
+            None
+            if value.get("stale_after_days") is None
+            else int(cast(int, value["stale_after_days"]))
         ),
     )
 
