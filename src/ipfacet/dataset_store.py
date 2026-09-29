@@ -100,7 +100,9 @@ def _manifest_from_dict(value: dict[str, object]) -> DatasetManifest:
         integrity_algorithm=str(integrity["algorithm"]),
         integrity_value=str(integrity["value"]),
         source_integrity_algorithm=(
-            None if source_integrity.get("algorithm") is None else str(source_integrity["algorithm"])
+            None
+            if source_integrity.get("algorithm") is None
+            else str(source_integrity["algorithm"])
         ),
         source_integrity_value=(
             None if source_integrity.get("value") is None else str(source_integrity["value"])
