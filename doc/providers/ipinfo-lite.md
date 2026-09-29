@@ -31,7 +31,7 @@ as_domain       -> as_domain
 
 `continent` (the full continent name) is retained by the source dataset but is not currently a canonical IPFacet scalar field.
 
-IPinfo describes the Lite ASN as the autonomous system number for the organization owning the IP range block, and `as_name` as the AS organization name. IPFacet therefore labels the semantics as IPinfo Lite ASN/AS-organization data and does not reinterpret it as an ISP, allocation registrant, or RIR WHOIS owner.
+IPinfo's current first-party descriptions are not fully identical: the Lite product page describes `asn` as the autonomous system number announcing the IP address, while the Lite database schema describes the ASN in terms of an organization that owns the IP range block. IPFacet does not choose between those two provider descriptions. Provenance therefore calls the value the **IPinfo Lite ASN for the IP range** and does not independently label it BGP origin ASN, allocation ownership, ISP, RIR registrant, or network owner. `as_name` remains the provider's AS organization name.
 
 Lite does **not** provide canonical city, region, timezone, ISP, privacy/VPN/proxy, hosting, network-type, or threat/reputation data. The provider must not synthesize those fields.
 
