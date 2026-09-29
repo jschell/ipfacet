@@ -37,6 +37,8 @@ HEADER = (
 )
 ROWS = (
     '1.1.1.0/24,Australia,AU,Oceania,OC,AS13335,"Example Edge, Inc.",example.test\n'
+    "154.24.39.204/30,Canada,CA,North America,NA,AS174,"
+    "Cogent Communications,cogentco.com\n"
     "203.0.113.0/24,Testland,TL,Test Continent,TC,AS64500,Example AS,example.invalid\n"
     "2606:4700:4700::/48,United States,US,North America,NA,"
     "AS13335,Example Edge,example.test\n"
@@ -90,6 +92,20 @@ def test_csv_provider_maps_documented_lite_fields_for_ipv4(tmp_path: Path) -> No
     assert result.asn.provenance.version == "fixture-v1"
 
 
+def test_csv_provider_matches_ipinfo_documented_sample(tmp_path: Path) -> None:
+    path = write_fixture(tmp_path)
+    provider = IPinfoLiteCSVProvider(path, version="documented-sample")
+
+    result = open_database(providers=(provider,), policy=policy()).lookup("154.24.39.205")
+
+    assert result.asn.value == 174
+    assert result.as_name.value == "Cogent Communications"
+    assert result.as_domain.value == "cogentco.com"
+    assert result.country_code.value == "CA"
+    assert result.country_name.value == "Canada"
+    assert result.continent_code.value == "NA"
+
+
 def test_csv_provider_supports_ipv6(tmp_path: Path) -> None:
     path = write_fixture(tmp_path)
     provider = IPinfoLiteCSVProvider(path, version="fixture-v6")
@@ -99,6 +115,20 @@ def test_csv_provider_supports_ipv6(tmp_path: Path) -> None:
     assert result.asn.value == 13335
     assert result.country_code.value == "US"
     assert result.network.value == "2606:4700:4700::/48"
+
+
+def test_csv_provider_preserves_blank_fields_as_not_found(tmp_path: Path) -> None:
+    rows = "9.9.9.0/24,,,,,AS19281,Example Resolver,\n"
+    path = write_fixture(tmp_path, rows=rows)
+    provider = IPinfoLiteCSVProvider(path, version="missing-fields")
+
+    result = open_database(providers=(provider,), policy=policy()).lookup("9.9.9.9")
+
+    assert result.asn.value == 19281
+    assert result.as_domain.state is FieldState.NOT_FOUND
+    assert result.country_code.state is FieldState.NOT_FOUND
+    assert result.country_name.state is FieldState.NOT_FOUND
+    assert result.continent_code.state is FieldState.NOT_FOUND
 
 
 def test_csv_provider_reports_missing_range_without_guessing(tmp_path: Path) -> None:
