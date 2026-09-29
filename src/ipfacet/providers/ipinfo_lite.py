@@ -154,13 +154,12 @@ class IPinfoLiteValidator:
 @dataclass(frozen=True, slots=True)
 class _CSVRecord:
     network: str
-    country: str
-    country_code: str
-    continent: str
-    continent_code: str
-    asn: int
-    as_name: str
-    as_domain: str
+    country: str | None
+    country_code: str | None
+    continent_code: str | None
+    asn: int | None
+    as_name: str | None
+    as_domain: str | None
 
 
 class _NetworkOffsets:
@@ -294,7 +293,7 @@ class IPinfoLiteCSVProvider:
             CanonicalField.COUNTRY_NAME: "IPinfo Lite country name",
             CanonicalField.CONTINENT_CODE: "IPinfo Lite continent code",
         }
-        values: dict[CanonicalField, int | str] = {
+        values: dict[CanonicalField, int | str | None] = {
             CanonicalField.ASN: record.asn,
             CanonicalField.AS_NAME: record.as_name,
             CanonicalField.AS_DOMAIN: record.as_domain,
@@ -303,18 +302,23 @@ class IPinfoLiteCSVProvider:
             CanonicalField.COUNTRY_NAME: record.country,
             CanonicalField.CONTINENT_CODE: record.continent_code,
         }
+        observations = []
+        for field, value in values.items():
+            if value is None:
+                observations.append(ProviderObservation(field=field, state=FieldState.NOT_FOUND))
+            else:
+                observations.append(
+                    ProviderObservation(
+                        field=field,
+                        state=FieldState.PRESENT,
+                        value=value,
+                        semantics=semantics[field],
+                    )
+                )
         return ProviderResult(
             ip=ip,
             identity=self.identity,
-            fields=tuple(
-                ProviderObservation(
-                    field=field,
-                    state=FieldState.PRESENT,
-                    value=value,
-                    semantics=semantics[field],
-                )
-                for field, value in values.items()
-            ),
+            fields=tuple(observations),
         )
 
     @staticmethod
@@ -363,19 +367,16 @@ def _parse_record(row: Mapping[str, str]) -> _CSVRecord:
     try:
         network = ip_network(row["network"], strict=False)
         asn_text = row["asn"]
-        if not asn_text.startswith("AS") or not asn_text[2:].isdigit():
+        if asn_text and (not asn_text.startswith("AS") or not asn_text[2:].isdigit()):
             raise ValueError("invalid ASN")
-        if not row["country_code"] or not row["continent_code"]:
-            raise ValueError("missing geographic code")
         return _CSVRecord(
             network=str(network),
-            country=row["country"],
-            country_code=row["country_code"],
-            continent=row["continent"],
-            continent_code=row["continent_code"],
-            asn=int(asn_text[2:]),
-            as_name=row["as_name"],
-            as_domain=row["as_domain"],
+            country=row["country"] or None,
+            country_code=row["country_code"] or None,
+            continent_code=row["continent_code"] or None,
+            asn=int(asn_text[2:]) if asn_text else None,
+            as_name=row["as_name"] or None,
+            as_domain=row["as_domain"] or None,
         )
     except (KeyError, ValueError) as exc:
         raise DatasetValidationError("invalid IPinfo Lite record") from exc
