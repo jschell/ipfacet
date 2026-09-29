@@ -160,6 +160,30 @@ def test_validator_detects_schema_change(tmp_path: Path) -> None:
         IPinfoLiteValidator().validate(tmp_path, manifest)
 
 
+def test_validator_rejects_invalid_later_record_before_activation(tmp_path: Path) -> None:
+    source = tmp_path / "bad-source"
+    rows = (
+        "1.1.1.0/24,Australia,AU,Oceania,OC,AS13335,Example,example.test\n"
+        "8.8.8.0/24,United States,US,North America,NA,NOT_AN_ASN,Example,example.test\n"
+    )
+    write_fixture(source, rows=rows)
+    manager = DatasetManager(
+        store=DatasetStore(tmp_path / "store"),
+        definitions=(IPINFO_LITE_DEFINITION,),
+        validators={(IPINFO_LITE_PROVIDER, IPINFO_LITE_DATASET): IPinfoLiteValidator()},
+    )
+
+    with pytest.raises(DatasetValidationError, match="invalid IPinfo Lite record"):
+        manager.import_dataset(
+            IPINFO_LITE_PROVIDER,
+            IPINFO_LITE_DATASET,
+            source,
+            release="invalid-record",
+        )
+
+    assert manager.list_installed() == ()
+
+
 def test_provider_rejects_overlapping_or_unsorted_networks(tmp_path: Path) -> None:
     rows = (
         "1.1.1.0/24,Australia,AU,Oceania,OC,AS13335,Example,example.test\n"
