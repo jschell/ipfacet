@@ -6,7 +6,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 
 ## Status
 
-IPFacet is pre-alpha. Plan 00 establishes the canonical API and local IP classification; real reference-data providers are implemented in later plans.
+IPFacet is pre-alpha. Plan 00 (foundation and canonical API) is complete on the implementation branch; real reference-data providers are implemented in later plans.
 
 ## Goals
 
