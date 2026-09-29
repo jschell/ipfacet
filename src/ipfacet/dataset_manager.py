@@ -9,8 +9,8 @@ from pathlib import Path
 
 from ipfacet.dataset_store import DatasetStore, snapshot_hash
 from ipfacet.datasets import (
-    AcquisitionMethod,
     AcquiredDataset,
+    AcquisitionMethod,
     DatasetAcquirer,
     DatasetDefinition,
     DatasetManifest,
@@ -120,7 +120,13 @@ class DatasetManager:
             validator.validate(self.store.version_path(provider, dataset, selected), manifest)
         return manifest
 
-    def rollback(self, provider: str, dataset: str, *, release: str | None = None) -> DatasetManifest:
+    def rollback(
+        self,
+        provider: str,
+        dataset: str,
+        *,
+        release: str | None = None,
+    ) -> DatasetManifest:
         active = self.store.active_manifest(provider, dataset)
         if not active.retain_previous_versions:
             raise DatasetError(f"{provider}/{dataset} does not permit retained-version rollback")
@@ -132,7 +138,9 @@ class DatasetManager:
         if release is not None:
             candidates = [item for item in candidates if item.release == release]
         if not candidates:
-            raise DatasetNotInstalledError(f"no rollback snapshot available for {provider}/{dataset}")
+            raise DatasetNotInstalledError(
+                f"no rollback snapshot available for {provider}/{dataset}"
+            )
         target = candidates[0]
         self.verify(provider, dataset, release=target.release)
         return self.store.activate(target)
@@ -149,7 +157,9 @@ class DatasetManager:
             if acquired.integrity_algorithm.lower() != "sha256":
                 raise DatasetValidationError("only sha256 acquisition integrity is supported")
             if acquired.integrity_value != digest:
-                raise DatasetValidationError("acquired dataset checksum does not match staged content")
+                raise DatasetValidationError(
+                    "acquired dataset checksum does not match staged content"
+                )
         manifest = DatasetManifest(
             schema_version=1,
             provider=definition.provider,
