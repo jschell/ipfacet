@@ -153,13 +153,6 @@ class DatasetManager:
         method: AcquisitionMethod,
     ) -> DatasetManifest:
         digest = snapshot_hash(staged)
-        if acquired.integrity_algorithm is not None:
-            if acquired.integrity_algorithm.lower() != "sha256":
-                raise DatasetValidationError("only sha256 acquisition integrity is supported")
-            if acquired.integrity_value != digest:
-                raise DatasetValidationError(
-                    "acquired dataset checksum does not match staged content"
-                )
         manifest = DatasetManifest(
             schema_version=1,
             provider=definition.provider,
@@ -172,6 +165,8 @@ class DatasetManager:
             dataset_format=definition.dataset_format,
             integrity_algorithm="sha256",
             integrity_value=digest,
+            source_integrity_algorithm=acquired.source_integrity_algorithm,
+            source_integrity_value=acquired.source_integrity_value,
             adapter_version=definition.adapter_version,
             license_reference=definition.license_reference,
             attribution=definition.attribution,
