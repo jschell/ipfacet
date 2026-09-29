@@ -6,7 +6,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 
 ## Status
 
-IPFacet is pre-alpha. Plans 00–02 establish the canonical API, provider resolution, and safe local dataset lifecycle. Plan 03 adds IPinfo Lite as the first real offline reference-data provider.
+IPFacet is pre-alpha. Plans 00–02 establish the canonical API, provider resolution, and safe local dataset lifecycle. Plan 03 adds IPinfo Lite as the first real offline reference-data provider. Plan 04 adds IP2Proxy LITE PX8 with deliberately constrained open-proxy and network-usage semantics.
 
 ## Goals
 
@@ -109,4 +109,8 @@ IPinfo Lite data is licensed separately from IPFacet under CC BY-SA 4.0.
 
 IP address data powered by IPinfo: https://ipinfo.io
 
-Provider terms, schema semantics, acquisition limits, version identity, and attribution details are documented in [doc/providers/ipinfo-lite.md](doc/providers/ipinfo-lite.md). Third-party reference databases are never bundled in the IPFacet Python distribution.
+Provider terms, schema semantics, acquisition limits, version identity, and attribution details are documented in [doc/providers/ipinfo-lite.md](doc/providers/ipinfo-lite.md).
+
+IPFacet uses the IP2Proxy LITE database for IP geolocation (https://www.ip2location.com). IP2Proxy LITE terms, free-tier coverage limits, acquisition behavior, and canonical trait mappings are documented in [doc/providers/ip2proxy-lite.md](doc/providers/ip2proxy-lite.md).
+
+Third-party reference databases are never bundled in the IPFacet Python distribution.
