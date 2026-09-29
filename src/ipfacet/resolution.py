@@ -222,9 +222,7 @@ class ProviderResolver:
             provider = self._providers[name]
             result = results[name]
             if capability not in provider.capabilities:
-                statuses.append(
-                    self._status(result, FieldState.UNSUPPORTED)
-                )
+                statuses.append(self._status(result, FieldState.UNSUPPORTED))
                 continue
             observation = result.observation(field)
             if observation is None:
