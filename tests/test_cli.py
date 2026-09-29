@@ -18,11 +18,22 @@ def test_dataset_cli_airgap_import_list_and_verify(
 ) -> None:
     from ipfacet.dataset_manager import DatasetManager
     from ipfacet.dataset_store import DatasetStore
+    from ipfacet.datasets import DatasetDefinition
 
     source = tmp_path / "source"
     source.mkdir()
     source.joinpath("data.txt").write_text("fixture", encoding="utf-8")
-    manager = DatasetManager(store=DatasetStore(tmp_path / "store"))
+    definition = DatasetDefinition(
+        provider="manual",
+        dataset="fixture",
+        dataset_format="text",
+        adapter_version="1",
+        license_reference="manual-license",
+    )
+    manager = DatasetManager(
+        store=DatasetStore(tmp_path / "store"),
+        definitions=(definition,),
+    )
 
     assert (
         main(
@@ -34,12 +45,6 @@ def test_dataset_cli_airgap_import_list_and_verify(
                 str(source),
                 "--release",
                 "v1",
-                "--format",
-                "text",
-                "--adapter-version",
-                "1",
-                "--license-reference",
-                "manual-license",
             ],
             manager=manager,
         )
