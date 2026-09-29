@@ -7,7 +7,7 @@ from collections.abc import Iterable, Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 
-from ipfacet.dataset_store import DatasetStore, snapshot_hash
+from ipfacet.dataset_store import DatasetStore, reject_symlinks, snapshot_hash
 from ipfacet.datasets import (
     AcquiredDataset,
     AcquisitionMethod,
@@ -108,6 +108,7 @@ class DatasetManager:
             raise DatasetError(f"no dataset definition registered for {provider}/{dataset}")
         if not source.is_dir():
             raise DatasetValidationError("manual import source must be a directory")
+        reject_symlinks(source)
         staged = self.store.staging_dir(definition.provider, definition.dataset)
         try:
             for item in source.iterdir():
