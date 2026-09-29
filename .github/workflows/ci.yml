@@ -33,3 +33,10 @@ jobs:
         run: uv run --frozen pytest
       - name: Build
         run: uv build
+      - name: Install built wheel in clean environment
+        run: |
+          uv venv --python 3.12 "$RUNNER_TEMP/ipfacet-wheel"
+          uv pip install --python "$RUNNER_TEMP/ipfacet-wheel/bin/python" dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/ipfacet-wheel/bin/python" -c 'import importlib.metadata, ipfacet; assert importlib.metadata.version("ipfacet") == "1.0.0rc1"; assert ipfacet.open_database().lookup("192.0.2.1").scope is ipfacet.IPScope.DOCUMENTATION'
+          "$RUNNER_TEMP/ipfacet-wheel/bin/ipfacet" --version

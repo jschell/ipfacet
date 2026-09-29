@@ -6,7 +6,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 
 ## Status
 
-IPFacet is pre-alpha. Plans 00–02 establish the canonical API, provider resolution, and safe local dataset lifecycle. Plan 03 adds IPinfo Lite as the first real offline reference-data provider. Plan 04 adds IP2Proxy LITE PX8 with deliberately constrained open-proxy and network-usage semantics. Plan 05 adds GeoLite2 ASN CSV with explicit acquisition and offline IPv4/IPv6 lookup. Plan 06 adds batch DataFrame boundaries and performance measurements.
+IPFacet is a V1 release candidate (`1.0.0rc1`). It provides offline adapters for IPinfo Lite, IP2Proxy LITE PX8, and MaxMind GeoLite2 ASN, plus batch DataFrame enrichment. See the [public API](doc/public-api.md), [changelog](CHANGELOG.md), and [compatibility policy](doc/compatibility.md).
 
 ## Goals
 
@@ -43,7 +43,7 @@ result = db.lookup("192.0.2.10")
 assert result.scope is ipfacet.IPScope.DOCUMENTATION
 ```
 
-IPFacet works without an external dataset for local IP scope classification. Plan 01 adds typed provider capabilities and deterministic cross-provider resolution while keeping real vendor adapters out of the core.
+IPFacet works without an external dataset for local IP scope classification. Provider-backed lookups require installed datasets, opened provider snapshots, and an explicit resolution policy.
 
 A provider-backed database uses explicit field precedence:
 
@@ -63,13 +63,7 @@ explanation = result.explain("asn")
 
 Provider registration order does not select winners; the field policy does. Conflicting present values preserve all observations and select according to policy. Missing, unsupported, and lookup-error states remain distinguishable in the explanation trace.
 
-Planned provider-backed use remains:
-
-```python
-db = ipfacet.open_database()
-result = db.lookup("1.1.1.1")
-results = db.lookup_many(["1.1.1.1", "8.8.8.8"])
-```
+See the [offline notebook integration](doc/consumer-notebook.md) for a complete provider-backed example with installation, policy, batch enrichment, and derived relationship state.
 
 For telemetry tables, `enrich_frame(db, frame, ip_column="source_ip")` supports Polars,
 Pandas, and PyArrow through optional extras, deduplicates IPs before provider lookup,
@@ -88,9 +82,9 @@ IPFacet is not a threat-intelligence or reputation platform. V1 does not include
 
 ## Dataset lifecycle
 
-Reference datasets are not bundled in the Python package. `DatasetManager` stages and validates snapshots before activation, records credential-free provenance/licensing manifests, verifies local SHA-256 integrity, enforces provider retention constraints, supports verified rollback, and treats manual/air-gapped imports as first-class.
+Reference datasets are not bundled in the Python package. `DatasetManager` stages and validates snapshots before activation, records credential-free provenance/licensing manifests, verifies local SHA-256 integrity, supports verified rollback, and treats manual/air-gapped imports as first-class. GeoLite superseded-release destruction is managed by the operator.
 
-The CLI exposes `ipfacet datasets available/list/status/install/import/update/verify/rollback`. Real-provider automated downloads remain disabled until each provider plan documents authentication, automation permission, download limits, attribution, redistribution, retention/destruction, and old-snapshot rules. See [doc/dataset-lifecycle.md](doc/dataset-lifecycle.md).
+The CLI exposes `ipfacet datasets available/list/status/install/import/update/verify/rollback`. Provider downloads are explicit and separately documented; ordinary lookup is offline. `datasets status --verify` checks the active snapshot and shows licensing, freshness, retained releases, and operator warnings. See [doc/dataset-lifecycle.md](doc/dataset-lifecycle.md).
 
 ## Development workflow
 

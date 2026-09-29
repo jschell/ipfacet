@@ -1,6 +1,6 @@
 # Plan 07 — Consumer Integration and V1 Hardening
 
-**Status:** Queue  
+**Status:** Active  
 **Depends on:** Plans 00–06
 
 ## Objective

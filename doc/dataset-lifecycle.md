@@ -79,11 +79,11 @@ ipfacet datasets verify <provider> <dataset> [--release VERSION]
 ipfacet datasets rollback <provider> <dataset> [--release VERSION]
 ```
 
-`install` and `update` require a registered provider acquisition helper. Plan 02 deliberately registers no real provider download helper.
+`install` and `update` require a registered provider acquisition helper. The IPinfo Lite, IP2Proxy LITE, and GeoLite2 ASN adapters now provide explicit acquisition helpers; ordinary lookup remains offline.
 
 ## Real-provider research gate
 
-Automated acquisition is disabled until the provider-specific implementation documents and tests:
+Acquisition helpers are enabled only after the provider-specific implementation documents and tests:
 
 1. authentication mechanism,
 2. whether automated download/update is permitted,

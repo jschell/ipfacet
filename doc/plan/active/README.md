@@ -4,6 +4,6 @@ Plans currently being implemented live here.
 
 ## Active
 
-No implementation plan is active. Plan 07 remains queued until the Plan 06 pull request is merged.
+- [07 — Consumer Integration and V1 Hardening](07-consumer-integration-v1.md)
 
 A plan moves here from `../queue/` when implementation begins and moves to `../complete/` only after all exit criteria and CI checks pass.
