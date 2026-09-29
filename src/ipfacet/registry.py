@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from ipfacet.dataset_manager import DatasetManager
 from ipfacet.dataset_store import DatasetStore
+from ipfacet.providers.ip2proxy_lite import (
+    IP2PROXY_LITE_DATASET,
+    IP2PROXY_LITE_DEFINITION,
+    IP2PROXY_LITE_PROVIDER,
+    IP2ProxyLiteAcquirer,
+    IP2ProxyLiteValidator,
+)
 from ipfacet.providers.ipinfo_lite import (
     IPINFO_LITE_DATASET,
     IPINFO_LITE_DEFINITION,
@@ -17,7 +24,10 @@ def default_dataset_manager(*, store: DatasetStore | None = None) -> DatasetMana
     """Return a manager with built-in provider policy/acquisition registrations."""
     return DatasetManager(
         store=store,
-        definitions=(IPINFO_LITE_DEFINITION,),
-        acquirers=(IPinfoLiteAcquirer(),),
-        validators={(IPINFO_LITE_PROVIDER, IPINFO_LITE_DATASET): IPinfoLiteValidator()},
+        definitions=(IPINFO_LITE_DEFINITION, IP2PROXY_LITE_DEFINITION),
+        acquirers=(IPinfoLiteAcquirer(), IP2ProxyLiteAcquirer()),
+        validators={
+            (IPINFO_LITE_PROVIDER, IPINFO_LITE_DATASET): IPinfoLiteValidator(),
+            (IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET): IP2ProxyLiteValidator(),
+        },
     )
