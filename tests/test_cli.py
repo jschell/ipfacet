@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from ipfacet.cli import main
@@ -11,7 +13,7 @@ def test_cli_version(capsys: pytest.CaptureFixture[str]) -> None:
 
 
 def test_dataset_cli_airgap_import_list_and_verify(
-    tmp_path,
+    tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     from ipfacet.dataset_manager import DatasetManager
@@ -54,7 +56,7 @@ def test_dataset_cli_airgap_import_list_and_verify(
 
 
 def test_dataset_cli_returns_error_without_registered_acquirer(
-    tmp_path,
+    tmp_path: Path,
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     from ipfacet.dataset_manager import DatasetManager
