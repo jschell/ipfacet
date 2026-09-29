@@ -9,3 +9,4 @@ Plans move here only after their exit criteria are satisfied and CI passes.
 - [02 — Dataset Acquisition and Lifecycle](02-dataset-acquisition-lifecycle.md)
 - [03 — IPinfo Lite Provider](03-ipinfo-lite-provider.md)
 - [04 — IP2Proxy LITE Provider](04-ip2proxy-lite-provider.md)
+- [05 — MaxMind GeoLite2 Provider](05-maxmind-geolite2-provider.md)

@@ -1,6 +1,6 @@
 # Plan 05 — MaxMind GeoLite2 Provider
 
-**Status:** Active  
+**Status:** Complete  
 **Depends on:** Plans 01–02
 
 ## Objective
@@ -29,6 +29,15 @@ The adapter/lifecycle policy must therefore:
 - preserve reproducibility through result provenance/version/hash after the operator removes old data.
 
 Terms must be revalidated at implementation time.
+
+## Implementation outcome
+
+The ASN CSV adapter, authenticated acquisition, manual import, IPv4/IPv6 offline
+lookup, provenance, and IPinfo conflict tests are implemented. The operator manages
+destruction of superseded GeoLite data under the current EULA; IPFacet does not
+delete old releases automatically. See `doc/providers/maxmind-geolite2.md`.
+
+CI passed on PR #6 (98 tests, Ruff, strict Pyright, lock check, and build).
 
 ## Exit criteria
 

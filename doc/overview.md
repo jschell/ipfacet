@@ -129,6 +129,6 @@ A consumer such as Anomaly-Detections may use IPFacet to obtain factual context 
 - Plan 02: dataset lifecycle and acquisition — complete
 - Plan 03: IPinfo Lite provider — complete
 - Plan 04: IP2Proxy LITE provider — complete
-- Plan 05: MaxMind GeoLite2 provider — active
+- Plan 05: MaxMind GeoLite2 provider — complete
 - Plan 06: batch/dataframe performance
 - Plan 07: consumer integration and V1 hardening
