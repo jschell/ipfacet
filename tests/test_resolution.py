@@ -359,3 +359,29 @@ def test_provider_result_rejects_duplicate_fields() -> None:
             identity=identity,
             fields=(observation, observation),
         )
+
+
+def test_terminal_not_found_is_distinct_from_unsupported() -> None:
+    source = provider("source", {Capability.ASN})
+    policy = ResolutionPolicy((rule(CanonicalField.ASN, "source"),))
+
+    result = open_database(providers=[source], policy=policy).lookup("1.1.1.1")
+
+    assert result.asn.state is FieldState.NOT_FOUND
+    assert result.explain("asn").reason is ResolutionReason.NOT_FOUND
+
+
+def test_terminal_unsupported_when_policy_has_no_capable_source() -> None:
+    source = provider("source", {Capability.COUNTRY})
+    policy = ResolutionPolicy(
+        (
+            rule(CanonicalField.ASN, "source"),
+            rule(CanonicalField.COUNTRY_CODE, "source"),
+            rule(CanonicalField.COUNTRY_NAME, "source"),
+        )
+    )
+
+    result = open_database(providers=[source], policy=policy).lookup("1.1.1.1")
+
+    assert result.asn.state is FieldState.UNSUPPORTED
+    assert result.explain("asn").reason is ResolutionReason.UNSUPPORTED
