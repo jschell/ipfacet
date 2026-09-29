@@ -216,8 +216,7 @@ class DatasetStore:
             keep = {active_release}
         elif definition.retention.max_retained_versions is not None:
             keep = {
-                item.release
-                for item in manifests[: definition.retention.max_retained_versions]
+                item.release for item in manifests[: definition.retention.max_retained_versions]
             }
             keep.add(active_release)
         else:
