@@ -11,3 +11,4 @@ Plans move here only after their exit criteria are satisfied and CI passes.
 - [04 — IP2Proxy LITE Provider](04-ip2proxy-lite-provider.md)
 - [05 — MaxMind GeoLite2 Provider](05-maxmind-geolite2-provider.md)
 - [06 — Batch and DataFrame Performance](06-batch-dataframe-performance.md)
+- [07 — Consumer Integration and V1 Hardening](07-consumer-integration-v1.md)

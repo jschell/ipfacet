@@ -1,6 +1,6 @@
 # Plan 07 — Consumer Integration and V1 Hardening
 
-**Status:** Active  
+**Status:** Complete  
 **Depends on:** Plans 00–06
 
 ## Objective
@@ -56,3 +56,14 @@ Those behavioral calculations remain outside IPFacet.
 - all prior plans complete,
 - full CI passes,
 - V1 release candidate can be reproduced from repository state.
+
+## Outcome
+
+The `1.0.0rc1` code, lockfile, changelog, public API and compatibility policy,
+offline notebook example, synthetic two-provider consumer contract, and clean-wheel
+install gate are in place. `datasets status --verify` surfaces active integrity,
+license/attribution, freshness, retained releases, and the GeoLite operator warning.
+No provider database, customer telemetry, or credential is bundled. GeoLite old-release
+destruction remains with the operator. PR #8 CI passed with 111 tests, Ruff, strict
+Pyright, build, and the wheel installation gate. The package and final V1 tag have
+not been published.

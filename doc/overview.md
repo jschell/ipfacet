@@ -131,4 +131,4 @@ A consumer such as Anomaly-Detections may use IPFacet to obtain factual context 
 - Plan 04: IP2Proxy LITE provider — complete
 - Plan 05: MaxMind GeoLite2 provider — complete
 - Plan 06: batch/dataframe performance — complete
-- Plan 07: consumer integration and V1 hardening — active
+- Plan 07: consumer integration and V1 hardening — complete
