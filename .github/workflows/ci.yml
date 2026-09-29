@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - name: Set up Python
+        run: uv python install 3.12
+      - name: Resolve bootstrap lock
+        run: |
+          uv lock
+          echo "===UV_LOCK_BEGIN==="
+          cat uv.lock
+          echo "===UV_LOCK_END==="
+      - name: Sync environment
+        run: uv sync --locked --dev
+      - name: Ruff lint
+        run: uv run --locked ruff check .
+      - name: Ruff format
+        run: uv run --locked ruff format --check .
+      - name: Pyright
+        run: uv run --locked pyright
+      - name: Tests
+        run: uv run --locked pytest
+      - name: Build
+        run: uv build
