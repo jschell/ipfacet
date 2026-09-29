@@ -35,8 +35,7 @@ IP2PROXY_LITE_FILENAME = "IP2PROXY-LITE-PX8.IPV6.CSV"
 IP2PROXY_LITE_DOWNLOAD_URL = "https://www.ip2location.com/download"
 IP2PROXY_LITE_LICENSE = "https://lite.ip2location.com/data-license"
 IP2PROXY_LITE_ATTRIBUTION = (
-    "IPFacet uses the IP2Proxy LITE database for IP geolocation "
-    "(https://www.ip2location.com)."
+    "IPFacet uses the IP2Proxy LITE database for IP geolocation (https://www.ip2location.com)."
 )
 IP2PROXY_LITE_SCHEMA = (
     "ip_from",
@@ -107,12 +106,8 @@ class IP2ProxyLiteAcquirer:
         code_getter: Callable[[], str | None] | None = None,
     ) -> None:
         self._transport = transport or UrllibDownloadTransport()
-        self._token_getter = token_getter or (
-            lambda: os.environ.get("IP2LOCATION_DOWNLOAD_TOKEN")
-        )
-        self._code_getter = code_getter or (
-            lambda: os.environ.get("IP2PROXY_LITE_FILE_CODE")
-        )
+        self._token_getter = token_getter or (lambda: os.environ.get("IP2LOCATION_DOWNLOAD_TOKEN"))
+        self._code_getter = code_getter or (lambda: os.environ.get("IP2PROXY_LITE_FILE_CODE"))
 
     def acquire(self, destination: Path) -> AcquiredDataset:
         token = self._token_getter()
@@ -138,14 +133,11 @@ class IP2ProxyLiteAcquirer:
             with zipfile.ZipFile(archive) as package:
                 names = package.namelist()
                 matches = [
-                    name
-                    for name in names
-                    if Path(name).name.upper() == IP2PROXY_LITE_FILENAME
+                    name for name in names if Path(name).name.upper() == IP2PROXY_LITE_FILENAME
                 ]
                 if len(matches) != 1:
                     raise DatasetValidationError(
-                        "IP2Proxy LITE archive must contain exactly one "
-                        f"{IP2PROXY_LITE_FILENAME}"
+                        f"IP2Proxy LITE archive must contain exactly one {IP2PROXY_LITE_FILENAME}"
                     )
                 source = package.open(matches[0])
                 with source, (destination / IP2PROXY_LITE_FILENAME).open("wb") as output:
