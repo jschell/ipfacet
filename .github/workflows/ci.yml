@@ -26,10 +26,7 @@ jobs:
       - name: Ruff lint
         run: uv run --frozen ruff check .
       - name: Ruff format
-        run: |
-          uv run --frozen ruff format src/ipfacet/dataset_store.py
-          git diff -- src/ipfacet/dataset_store.py
-          exit 1
+        run: uv run --frozen ruff format --check .
       - name: Pyright
         run: uv run --frozen pyright
       - name: Tests
