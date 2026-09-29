@@ -40,9 +40,7 @@ class DatasetManager:
             raise ValueError("duplicate dataset acquirer registration")
 
         registered_definitions = tuple(definitions)
-        self._definitions = {
-            (item.provider, item.dataset): item for item in registered_definitions
-        }
+        self._definitions = {(item.provider, item.dataset): item for item in registered_definitions}
         if len(self._definitions) != len(registered_definitions):
             raise ValueError("duplicate dataset definition registration")
         for key, acquirer in self._acquirers.items():
