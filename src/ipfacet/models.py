@@ -58,6 +58,14 @@ class FieldProvenance:
     version: str
     dataset_format: str | None = None
 
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "provider": self.provider,
+            "dataset": self.dataset,
+            "version": self.version,
+            "dataset_format": self.dataset_format,
+        }
+
 
 @dataclass(frozen=True, slots=True)
 class FieldObservation[T]:
@@ -65,6 +73,9 @@ class FieldObservation[T]:
 
     value: T
     provenance: FieldProvenance
+
+    def to_dict(self) -> dict[str, object]:
+        return {"value": self.value, "provenance": self.provenance.to_dict()}
 
 
 @dataclass(frozen=True, slots=True)
@@ -91,6 +102,15 @@ class ResolvedField[T]:
     @property
     def conflict(self) -> bool:
         return self.state is FieldState.CONFLICT
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "state": self.state.value,
+            "value": self.value,
+            "provenance": None if self.provenance is None else self.provenance.to_dict(),
+            "observations": [observation.to_dict() for observation in self.observations],
+            "error": self.error,
+        }
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,3 +154,19 @@ class IPEnrichment:
             self.isp,
         )
         return any(item.conflict for item in fields)
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a deterministic, JSON-compatible canonical representation."""
+        return {
+            "ip": str(self.ip),
+            "scope": self.scope.value,
+            "asn": self.asn.to_dict(),
+            "as_name": self.as_name.to_dict(),
+            "as_domain": self.as_domain.to_dict(),
+            "network": self.network.to_dict(),
+            "country_code": self.country_code.to_dict(),
+            "country_name": self.country_name.to_dict(),
+            "continent_code": self.continent_code.to_dict(),
+            "isp": self.isp.to_dict(),
+            "traits": sorted(trait.value for trait in self.traits),
+        }
