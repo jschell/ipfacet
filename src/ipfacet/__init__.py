@@ -19,8 +19,8 @@ from ipfacet.models import (
     IPScope,
     NetworkTrait,
     ProviderFieldStatus,
-    ResolvedField,
     ResolutionReason,
+    ResolvedField,
 )
 from ipfacet.provider import (
     Capability,
