@@ -26,22 +26,36 @@ class DatasetManager:
         self,
         *,
         store: DatasetStore | None = None,
+        definitions: Iterable[DatasetDefinition] = (),
         acquirers: Iterable[DatasetAcquirer] = (),
         validators: Mapping[tuple[str, str], DatasetValidator] | None = None,
     ) -> None:
         self.store = store or DatasetStore()
-        registered = tuple(acquirers)
+        registered_acquirers = tuple(acquirers)
         self._acquirers = {
-            (item.definition.provider, item.definition.dataset): item for item in registered
+            (item.definition.provider, item.definition.dataset): item
+            for item in registered_acquirers
         }
-        if len(self._acquirers) != len(registered):
+        if len(self._acquirers) != len(registered_acquirers):
             raise ValueError("duplicate dataset acquirer registration")
+
+        registered_definitions = tuple(definitions)
+        self._definitions = {
+            (item.provider, item.dataset): item for item in registered_definitions
+        }
+        if len(self._definitions) != len(registered_definitions):
+            raise ValueError("duplicate dataset definition registration")
+        for key, acquirer in self._acquirers.items():
+            existing = self._definitions.get(key)
+            if existing is not None and existing != acquirer.definition:
+                raise ValueError(f"conflicting dataset definition for {key[0]}/{key[1]}")
+            self._definitions[key] = acquirer.definition
         self._validators = dict(validators or {})
 
     def available(self) -> tuple[DatasetDefinition, ...]:
         return tuple(
             sorted(
-                (item.definition for item in self._acquirers.values()),
+                self._definitions.values(),
                 key=lambda item: (item.provider, item.dataset),
             )
         )
@@ -84,12 +98,16 @@ class DatasetManager:
 
     def import_dataset(
         self,
-        definition: DatasetDefinition,
+        provider: str,
+        dataset: str,
         source: Path,
         *,
         release: str,
         source_reference: str = "manual-import",
     ) -> DatasetManifest:
+        definition = self._definitions.get((provider, dataset))
+        if definition is None:
+            raise DatasetError(f"no dataset definition registered for {provider}/{dataset}")
         if not source.is_dir():
             raise DatasetValidationError("manual import source must be a directory")
         staged = self.store.staging_dir(definition.provider, definition.dataset)
