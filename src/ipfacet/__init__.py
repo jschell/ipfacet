@@ -9,6 +9,8 @@ from ipfacet.exceptions import (
     LookupError,
 )
 from ipfacet.models import (
+    CanonicalField,
+    FieldExplanation,
     FieldObservation,
     FieldProvenance,
     FieldState,
@@ -16,16 +18,32 @@ from ipfacet.models import (
     IPEnrichment,
     IPScope,
     NetworkTrait,
+    ProviderFieldStatus,
     ResolvedField,
+    ResolutionReason,
 )
+from ipfacet.provider import (
+    Capability,
+    EnrichmentProvider,
+    ProviderIdentity,
+    ProviderMetadata,
+    ProviderObservation,
+    ProviderResult,
+)
+from ipfacet.resolution import FieldPrecedence, ResolutionPolicy
 from ipfacet.scope import classify_scope, parse_ip
 
 __all__ = [
+    "CanonicalField",
+    "Capability",
     "Database",
     "DatasetError",
     "DatasetNotInstalledError",
     "DatasetValidationError",
+    "EnrichmentProvider",
+    "FieldExplanation",
     "FieldObservation",
+    "FieldPrecedence",
     "FieldProvenance",
     "FieldState",
     "IPAddress",
@@ -35,7 +53,14 @@ __all__ = [
     "LookupBackend",
     "LookupError",
     "NetworkTrait",
+    "ProviderFieldStatus",
+    "ProviderIdentity",
+    "ProviderMetadata",
+    "ProviderObservation",
+    "ProviderResult",
     "ResolvedField",
+    "ResolutionPolicy",
+    "ResolutionReason",
     "classify_scope",
     "open_database",
     "parse_ip",
