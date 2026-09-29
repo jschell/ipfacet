@@ -42,7 +42,8 @@ Those behavioral calculations remain outside IPFacet.
 - deterministic precedence,
 - conflict preservation,
 - dataset install/import/update/verify lifecycle,
-- provider-specific retention enforcement,
+- provider-specific retention behavior, with GeoLite superseded-release destruction
+  explicitly managed by the operator as documented in Plan 05,
 - Polars/Pandas/PyArrow integration,
 - no DNS/reputation/threat-intelligence dependency.
 

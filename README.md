@@ -6,7 +6,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 
 ## Status
 
-IPFacet is pre-alpha. Plans 00–02 establish the canonical API, provider resolution, and safe local dataset lifecycle. Plan 03 adds IPinfo Lite as the first real offline reference-data provider. Plan 04 adds IP2Proxy LITE PX8 with deliberately constrained open-proxy and network-usage semantics. Plan 05 adds GeoLite2 ASN CSV with explicit acquisition and offline IPv4/IPv6 lookup.
+IPFacet is pre-alpha. Plans 00–02 establish the canonical API, provider resolution, and safe local dataset lifecycle. Plan 03 adds IPinfo Lite as the first real offline reference-data provider. Plan 04 adds IP2Proxy LITE PX8 with deliberately constrained open-proxy and network-usage semantics. Plan 05 adds GeoLite2 ASN CSV with explicit acquisition and offline IPv4/IPv6 lookup. Plan 06 adds batch DataFrame boundaries and performance measurements.
 
 ## Goals
 
@@ -70,6 +70,11 @@ db = ipfacet.open_database()
 result = db.lookup("1.1.1.1")
 results = db.lookup_many(["1.1.1.1", "8.8.8.8"])
 ```
+
+For telemetry tables, `enrich_frame(db, frame, ip_column="source_ip")` supports Polars,
+Pandas, and PyArrow through optional extras, deduplicates IPs before provider lookup,
+and joins results back in input row order. See [batch and DataFrame guidance](doc/batch-dataframes.md)
+for columns, provenance options, benchmarks, and limits.
 
 ## Canonical semantics
 
