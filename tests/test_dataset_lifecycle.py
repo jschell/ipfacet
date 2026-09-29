@@ -200,7 +200,10 @@ def test_manifest_contains_required_lifecycle_metadata(tmp_path: Path) -> None:
     assert raw["retention"]["retain_previous_versions"] is True
 
 
-def test_credentials_stay_external_to_manifest(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_credentials_stay_external_to_manifest(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     secret = "super-secret-license-key"
     monkeypatch.setenv("IPFACET_FIXTURE_KEY", secret)
     credentials = environment_credentials(("IPFACET_FIXTURE_KEY",))
