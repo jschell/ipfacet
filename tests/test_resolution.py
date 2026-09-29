@@ -29,7 +29,7 @@ class SyntheticProvider:
     fields: tuple[ProviderObservation, ...] = ()
     traits: frozenset[NetworkTrait] = frozenset()
     metadata: tuple[ProviderMetadata, ...] = ()
-    calls: list[IPAddress] = field(default_factory=list)
+    calls: list[IPAddress] = field(default_factory=lambda: list[IPAddress]())
 
     def lookup(self, ip: IPAddress) -> ProviderResult:
         self.calls.append(ip)
