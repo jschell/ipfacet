@@ -155,26 +155,6 @@ class ProviderFieldStatus:
     value: int | str | None = None
     error: str | None = None
 
-    @classmethod
-    def from_result(
-        cls,
-        result: object,
-        state: FieldState,
-        *,
-        value: int | str | None = None,
-        error: str | None = None,
-    ) -> ProviderFieldStatus:
-        # Import-free duck typing keeps canonical models independent of provider implementations.
-        identity = getattr(result, "identity")
-        return cls(
-            provider=getattr(identity, "provider"),
-            dataset=getattr(identity, "dataset"),
-            version=getattr(identity, "version"),
-            state=state,
-            value=value,
-            error=error,
-        )
-
     def to_dict(self) -> dict[str, object]:
         return {
             "provider": self.provider,
