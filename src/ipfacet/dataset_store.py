@@ -34,8 +34,18 @@ def _safe_component(value: str) -> str:
     return value
 
 
+def reject_symlinks(path: Path) -> None:
+    """Reject snapshots that could reference data outside their immutable tree."""
+    link = next((item for item in path.rglob("*") if item.is_symlink()), None)
+    if link is not None:
+        raise DatasetValidationError(
+            f"dataset snapshot contains unsupported symlink: {link.relative_to(path)}"
+        )
+
+
 def snapshot_hash(path: Path) -> str:
     """Hash relative names and file contents for a deterministic snapshot digest."""
+    reject_symlinks(path)
     digest = hashlib.sha256()
     files = sorted(
         item for item in path.rglob("*") if item.is_file() and item.name != "manifest.json"
@@ -183,9 +193,14 @@ class DatasetStore:
         self.write_manifest(path, activated)
         pointer = self.dataset_root(manifest.provider, manifest.dataset) / "active.json"
         pointer.parent.mkdir(parents=True, exist_ok=True)
-        temp = pointer.with_name("active.json.tmp")
-        temp.write_text(json.dumps({"release": manifest.release}) + "\n", encoding="utf-8")
-        os.replace(temp, pointer)
+        descriptor, temp_name = tempfile.mkstemp(prefix="active-", suffix=".json", dir=pointer.parent)
+        temp = Path(temp_name)
+        try:
+            with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
+                handle.write(json.dumps({"release": manifest.release}) + "\n")
+            os.replace(temp, pointer)
+        finally:
+            temp.unlink(missing_ok=True)
         return activated
 
     def commit_staged(self, staged: Path, manifest: DatasetManifest) -> Path:
