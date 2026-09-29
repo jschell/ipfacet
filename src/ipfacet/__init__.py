@@ -42,6 +42,7 @@ from ipfacet.provider import (
     ProviderObservation,
     ProviderResult,
 )
+from ipfacet.registry import default_dataset_manager
 from ipfacet.resolution import FieldPrecedence, ResolutionPolicy
 from ipfacet.scope import classify_scope, parse_ip
 
@@ -84,6 +85,7 @@ __all__ = [
     "RetentionPolicy",
     "classify_scope",
     "default_data_dir",
+    "default_dataset_manager",
     "environment_credentials",
     "open_database",
     "parse_ip",
