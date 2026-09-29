@@ -6,7 +6,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 
 ## Status
 
-IPFacet is pre-alpha. Plan 00 (foundation and canonical API) is complete on the implementation branch; real reference-data providers are implemented in later plans.
+IPFacet is pre-alpha. Plans 00–01 establish the canonical API, provider capabilities, and deterministic multi-provider resolution. Real reference-data providers are implemented in later plans.
 
 ## Goals
 
@@ -43,7 +43,25 @@ result = db.lookup("192.0.2.10")
 assert result.scope is ipfacet.IPScope.DOCUMENTATION
 ```
 
-Plan 00 works without any external dataset and classifies IP scope locally. The canonical model includes typed field state, selected provenance, all contributing observations, and explicit conflict representation. Plan 01 adds provider capabilities and deterministic cross-provider resolution.
+IPFacet works without an external dataset for local IP scope classification. Plan 01 adds typed provider capabilities and deterministic cross-provider resolution while keeping real vendor adapters out of the core.
+
+A provider-backed database uses explicit field precedence:
+
+```python
+from ipfacet import CanonicalField, FieldPrecedence, ResolutionPolicy, open_database
+
+policy = ResolutionPolicy(
+    (
+        FieldPrecedence(CanonicalField.ASN, ("primary", "fallback")),
+    )
+)
+
+db = open_database(providers=[primary, fallback], policy=policy)
+result = db.lookup("1.1.1.1")
+explanation = result.explain("asn")
+```
+
+Provider registration order does not select winners; the field policy does. Conflicting present values preserve all observations and select according to policy. Missing, unsupported, and lookup-error states remain distinguishable in the explanation trace.
 
 Planned provider-backed use remains:
 
@@ -80,4 +98,4 @@ doc/plan/
 └── queue/
 ```
 
-Architecture and roadmap context are in [doc/overview.md](doc/overview.md).
+Architecture and roadmap context are in [doc/overview.md](doc/overview.md). Provider capability, semantic-mapping, precedence, fallback, conflict, and version-isolation rules are documented in [doc/provider-resolution.md](doc/provider-resolution.md).

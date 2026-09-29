@@ -124,8 +124,8 @@ A consumer such as Anomaly-Detections may use IPFacet to obtain factual context 
 
 ## Roadmap
 
-- Plan 00: foundation and canonical API
-- Plan 01: provider/capability and resolution architecture
+- Plan 00: foundation and canonical API — complete
+- Plan 01: provider/capability and resolution architecture — complete
 - Plan 02: dataset lifecycle and acquisition
 - Plan 03: IPinfo Lite provider
 - Plan 04: IP2Proxy LITE provider

@@ -1,6 +1,6 @@
 # Plan 01 — Provider, Capability, and Resolution Architecture
 
-**Status:** Queue  
+**Status:** Complete  
 **Depends on:** Plan 00
 
 ## Objective
@@ -52,3 +52,31 @@ Before two provider fields map to one canonical field, document that they repres
 - field provenance survives resolution,
 - provider implementations are not imported by canonical/core modules,
 - CI passes.
+
+
+## Completion record
+
+Completed on the Plan 01 implementation branch after the final frozen-lock CI run passed.
+
+Implemented and validated:
+
+- typed `EnrichmentProvider`, provider identity, observation, result, and metadata contracts,
+- explicit semantic capabilities for ASN, AS organization/domain, prefix, geography, ISP, and network traits,
+- field-specific deterministic precedence independent of provider registration order,
+- fallback, agreement, conflict, not-found, unsupported, and lookup-error behavior,
+- one-selected-version-per-provider enforcement,
+- field-level provenance including provider dataset version and source semantics,
+- deterministic `result.explain(...)` traces,
+- multi-valued network traits with per-observation provenance,
+- semantic mapping guardrails documented in `doc/provider-resolution.md`,
+- vendor-specific metadata retained only at the provider boundary and never promoted automatically.
+
+Validation:
+
+- `uv sync --frozen --dev` — pass
+- `uv lock --check` — pass
+- Ruff lint — pass
+- Ruff format — pass
+- strict Pyright — 0 errors, 0 warnings
+- pytest — 48 passed
+- `uv build` — pass

@@ -19,6 +19,22 @@ class FieldState(StrEnum):
     LOOKUP_ERROR = "lookup_error"
 
 
+class CanonicalField(StrEnum):
+    """Provider-neutral scalar fields resolved by source precedence."""
+
+    ASN = "asn"
+    AS_NAME = "as_name"
+    AS_DOMAIN = "as_domain"
+    NETWORK = "network"
+    COUNTRY_CODE = "country_code"
+    COUNTRY_NAME = "country_name"
+    CONTINENT_CODE = "continent_code"
+    REGION = "region"
+    CITY = "city"
+    TIMEZONE = "timezone"
+    ISP = "isp"
+
+
 class IPScope(StrEnum):
     """Locally determined address scope."""
 
@@ -49,14 +65,27 @@ class NetworkTrait(StrEnum):
     TOR = "tor"
 
 
+class ResolutionReason(StrEnum):
+    """Why a canonical field ended in its current state."""
+
+    SELECTED = "selected"
+    FALLBACK = "fallback"
+    AGREEMENT = "agreement"
+    CONFLICT = "conflict"
+    NOT_FOUND = "not_found"
+    UNSUPPORTED = "unsupported"
+    LOOKUP_ERROR = "lookup_error"
+
+
 @dataclass(frozen=True, slots=True)
 class FieldProvenance:
-    """Dataset identity for one observation."""
+    """Dataset identity and source semantics for one observation."""
 
     provider: str
     dataset: str
     version: str
     dataset_format: str | None = None
+    semantics: str | None = None
 
     def to_dict(self) -> dict[str, object]:
         return {
@@ -64,6 +93,7 @@ class FieldProvenance:
             "dataset": self.dataset,
             "version": self.version,
             "dataset_format": self.dataset_format,
+            "semantics": self.semantics,
         }
 
 
@@ -75,12 +105,13 @@ class FieldObservation[T]:
     provenance: FieldProvenance
 
     def to_dict(self) -> dict[str, object]:
-        return {"value": self.value, "provenance": self.provenance.to_dict()}
+        value = self.value.value if isinstance(self.value, StrEnum) else self.value
+        return {"value": value, "provenance": self.provenance.to_dict()}
 
 
 @dataclass(frozen=True, slots=True)
 class ResolvedField[T]:
-    """Resolved canonical field plus all observations used to resolve it."""
+    """Resolved canonical field plus all present observations used to resolve it."""
 
     state: FieldState
     value: T | None = None
@@ -114,6 +145,48 @@ class ResolvedField[T]:
 
 
 @dataclass(frozen=True, slots=True)
+class ProviderFieldStatus:
+    """One provider's participation in resolution of a canonical field."""
+
+    provider: str
+    dataset: str
+    version: str
+    state: FieldState
+    value: int | str | None = None
+    error: str | None = None
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "provider": self.provider,
+            "dataset": self.dataset,
+            "version": self.version,
+            "state": self.state.value,
+            "value": self.value,
+            "error": self.error,
+        }
+
+
+@dataclass(frozen=True, slots=True)
+class FieldExplanation:
+    """Deterministic trace of one field's resolution."""
+
+    field: CanonicalField
+    state: FieldState
+    reason: ResolutionReason
+    selected_provider: str | None
+    providers: tuple[ProviderFieldStatus, ...]
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "field": self.field.value,
+            "state": self.state.value,
+            "reason": self.reason.value,
+            "selected_provider": self.selected_provider,
+            "providers": [provider.to_dict() for provider in self.providers],
+        }
+
+
+@dataclass(frozen=True, slots=True)
 class IPEnrichment:
     """Canonical enrichment result for one IP address."""
 
@@ -138,8 +211,17 @@ class IPEnrichment:
     continent_code: ResolvedField[str] = field(
         default_factory=lambda: ResolvedField(FieldState.UNSUPPORTED)
     )
+    region: ResolvedField[str] = field(
+        default_factory=lambda: ResolvedField(FieldState.UNSUPPORTED)
+    )
+    city: ResolvedField[str] = field(default_factory=lambda: ResolvedField(FieldState.UNSUPPORTED))
+    timezone: ResolvedField[str] = field(
+        default_factory=lambda: ResolvedField(FieldState.UNSUPPORTED)
+    )
     isp: ResolvedField[str] = field(default_factory=lambda: ResolvedField(FieldState.UNSUPPORTED))
     traits: frozenset[NetworkTrait] = frozenset()
+    trait_observations: tuple[FieldObservation[NetworkTrait], ...] = ()
+    explanations: tuple[FieldExplanation, ...] = ()
 
     @property
     def has_conflicts(self) -> bool:
@@ -151,9 +233,23 @@ class IPEnrichment:
             self.country_code,
             self.country_name,
             self.continent_code,
+            self.region,
+            self.city,
+            self.timezone,
             self.isp,
         )
         return any(item.conflict for item in fields)
+
+    def explain(self, field: CanonicalField | str) -> FieldExplanation:
+        """Return the deterministic resolution trace for a canonical scalar field."""
+        canonical = field if isinstance(field, CanonicalField) else CanonicalField(field)
+        explanation = next(
+            (item for item in self.explanations if item.field is canonical),
+            None,
+        )
+        if explanation is None:
+            raise KeyError(f"no provider resolution trace for {canonical.value}")
+        return explanation
 
     def to_dict(self) -> dict[str, object]:
         """Return a deterministic, JSON-compatible canonical representation."""
@@ -167,6 +263,13 @@ class IPEnrichment:
             "country_code": self.country_code.to_dict(),
             "country_name": self.country_name.to_dict(),
             "continent_code": self.continent_code.to_dict(),
+            "region": self.region.to_dict(),
+            "city": self.city.to_dict(),
+            "timezone": self.timezone.to_dict(),
             "isp": self.isp.to_dict(),
             "traits": sorted(trait.value for trait in self.traits),
+            "trait_observations": [
+                observation.to_dict() for observation in self.trait_observations
+            ],
+            "explanations": [explanation.to_dict() for explanation in self.explanations],
         }
