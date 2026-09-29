@@ -1,6 +1,6 @@
 # Plan 06 — Batch and DataFrame Performance
 
-**Status:** Queue  
+**Status:** Active  
 **Depends on:** At least one real provider from Plans 03–05
 
 ## Objective

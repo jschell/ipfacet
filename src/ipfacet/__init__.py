@@ -20,6 +20,7 @@ from ipfacet.exceptions import (
     IPFacetError,
     LookupError,
 )
+from ipfacet.frames import enrich_frame
 from ipfacet.models import (
     CanonicalField,
     FieldExplanation,
@@ -86,6 +87,7 @@ __all__ = [
     "classify_scope",
     "default_data_dir",
     "default_dataset_manager",
+    "enrich_frame",
     "environment_credentials",
     "open_database",
     "parse_ip",
