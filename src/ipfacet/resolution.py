@@ -190,6 +190,24 @@ class ProviderResolver:
                 f"{provider.identity.provider} returned traits without declaring network_traits"
             )
 
+    @staticmethod
+    def _status(
+        result: ProviderResult,
+        state: FieldState,
+        *,
+        value: int | str | None = None,
+        error: str | None = None,
+    ) -> ProviderFieldStatus:
+        identity = result.identity
+        return ProviderFieldStatus(
+            provider=identity.provider,
+            dataset=identity.dataset,
+            version=identity.version,
+            state=state,
+            value=value,
+            error=error,
+        )
+
     def _resolve_field(
         self,
         field: CanonicalField,
@@ -205,15 +223,15 @@ class ProviderResolver:
             result = results[name]
             if capability not in provider.capabilities:
                 statuses.append(
-                    ProviderFieldStatus.from_result(result, FieldState.UNSUPPORTED)
+                    self._status(result, FieldState.UNSUPPORTED)
                 )
                 continue
             observation = result.observation(field)
             if observation is None:
-                statuses.append(ProviderFieldStatus.from_result(result, FieldState.NOT_FOUND))
+                statuses.append(self._status(result, FieldState.NOT_FOUND))
                 continue
             statuses.append(
-                ProviderFieldStatus.from_result(
+                self._status(
                     result,
                     observation.state,
                     value=observation.value,
