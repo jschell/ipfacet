@@ -14,7 +14,7 @@ from bisect import bisect_right
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from email.utils import parsedate_to_datetime
-from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network, ip_network
+from ipaddress import IPv4Address, IPv4Network, IPv6Network, ip_network
 from pathlib import Path
 from typing import Protocol
 
@@ -71,7 +71,7 @@ class UrllibDownloadTransport:
 
     def download(self, url: str, destination: Path) -> DownloadMetadata:
         try:
-            with urllib.request.urlopen(url, timeout=120) as response:  # noqa: S310
+            with urllib.request.urlopen(url, timeout=120) as response:
                 with destination.open("wb") as output:
                     shutil.copyfileobj(response, output)
                 return DownloadMetadata(last_modified=response.headers.get("Last-Modified"))
@@ -258,7 +258,9 @@ class IPinfoLiteCSVProvider:
                         break
                     row = next(csv.reader([line.decode("utf-8")]))
                     if len(row) != len(IPINFO_LITE_SCHEMA):
-                        raise DatasetValidationError("IPinfo Lite CSV row has unexpected field count")
+                        raise DatasetValidationError(
+                            "IPinfo Lite CSV row has unexpected field count"
+                        )
                     network = ip_network(row[0], strict=False)
                     index.add(network, offset)
         except (OSError, UnicodeError, csv.Error, ValueError) as exc:
@@ -277,7 +279,7 @@ class IPinfoLiteCSVProvider:
                 handle.seek(offset)
                 row = next(csv.reader([handle.readline().decode("utf-8")]))
             record = _parse_record(dict(zip(IPINFO_LITE_SCHEMA, row, strict=True)))
-        except (OSError, UnicodeError, csv.Error, ValueError) as exc:
+        except (OSError, UnicodeError, csv.Error, ValueError):
             return ProviderResult(
                 ip=ip,
                 identity=self.identity,
