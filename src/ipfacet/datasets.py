@@ -63,16 +63,19 @@ class AcquiredDataset:
 
     release: str
     source: str
-    integrity_algorithm: str | None = None
-    integrity_value: str | None = None
+    source_integrity_algorithm: str | None = None
+    source_integrity_value: str | None = None
+    source_integrity_verified: bool = False
 
     def __post_init__(self) -> None:
         if not self.release.strip():
             raise ValueError("release cannot be empty")
         if not self.source.strip():
             raise ValueError("source cannot be empty")
-        if (self.integrity_algorithm is None) != (self.integrity_value is None):
-            raise ValueError("integrity algorithm and value must be supplied together")
+        if (self.source_integrity_algorithm is None) != (self.source_integrity_value is None):
+            raise ValueError("source integrity algorithm and value must be supplied together")
+        if self.source_integrity_algorithm is not None and not self.source_integrity_verified:
+            raise ValueError("source integrity metadata must be verified before acquisition returns")
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,6 +93,8 @@ class DatasetManifest:
     dataset_format: str
     integrity_algorithm: str
     integrity_value: str
+    source_integrity_algorithm: str | None
+    source_integrity_value: str | None
     adapter_version: str
     license_reference: str
     attribution: str | None
