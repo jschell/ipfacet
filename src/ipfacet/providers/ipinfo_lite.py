@@ -357,11 +357,14 @@ def open_ipinfo_lite(store: DatasetStore | None = None) -> IPinfoLiteCSVProvider
         raise DatasetValidationError(
             f"unsupported IPinfo Lite installed format: {manifest.dataset_format}"
         )
-    path = selected.version_path(
-        IPINFO_LITE_PROVIDER,
-        IPINFO_LITE_DATASET,
-        manifest.release,
-    ) / IPINFO_LITE_FILENAME
+    path = (
+        selected.version_path(
+            IPINFO_LITE_PROVIDER,
+            IPINFO_LITE_DATASET,
+            manifest.release,
+        )
+        / IPINFO_LITE_FILENAME
+    )
     return IPinfoLiteCSVProvider(path, version=manifest.release)
 
 
