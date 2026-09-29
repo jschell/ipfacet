@@ -36,9 +36,7 @@ class Database:
             raise ValueError("resolution policy requires providers")
         self._backend = backend
         self._resolver = (
-            ProviderResolver(providers, policy)
-            if providers and policy is not None
-            else None
+            ProviderResolver(providers, policy) if providers and policy is not None else None
         )
 
     def lookup(self, value: str | IPAddress) -> IPEnrichment:
