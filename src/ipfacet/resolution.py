@@ -18,9 +18,9 @@ from ipfacet.models import (
     ResolvedField,
 )
 from ipfacet.provider import (
+    FIELD_CAPABILITY,
     Capability,
     EnrichmentProvider,
-    FIELD_CAPABILITY,
     ProviderObservation,
     ProviderResult,
 )
