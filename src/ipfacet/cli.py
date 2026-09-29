@@ -9,6 +9,7 @@ from pathlib import Path
 
 from ipfacet import __version__
 from ipfacet.dataset_manager import DatasetManager
+from ipfacet.registry import default_dataset_manager
 from ipfacet.exceptions import DatasetError
 
 
@@ -76,7 +77,7 @@ def main(argv: Sequence[str] | None = None, *, manager: DatasetManager | None = 
     args = build_parser().parse_args(argv)
     if args.command is None:
         return 0
-    dataset_manager = manager or DatasetManager()
+    dataset_manager = manager or default_dataset_manager()
     try:
         if args.dataset_command == "available":
             for definition in dataset_manager.available():
