@@ -5,8 +5,8 @@ from ipfacet.credentials import environment_credentials
 from ipfacet.dataset_manager import DatasetManager
 from ipfacet.dataset_store import DatasetStore, default_data_dir
 from ipfacet.datasets import (
-    AcquisitionMethod,
     AcquiredDataset,
+    AcquisitionMethod,
     DatasetAcquirer,
     DatasetDefinition,
     DatasetManifest,
