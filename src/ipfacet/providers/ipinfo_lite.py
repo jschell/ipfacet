@@ -304,7 +304,7 @@ class IPinfoLiteCSVProvider:
             CanonicalField.COUNTRY_NAME: record.country,
             CanonicalField.CONTINENT_CODE: record.continent_code,
         }
-        observations = []
+        observations: list[ProviderObservation] = []
         for field, value in values.items():
             if value is None:
                 observations.append(ProviderObservation(field=field, state=FieldState.NOT_FOUND))
