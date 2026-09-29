@@ -9,8 +9,8 @@ from pathlib import Path
 
 from ipfacet import __version__
 from ipfacet.dataset_manager import DatasetManager
-from ipfacet.registry import default_dataset_manager
 from ipfacet.exceptions import DatasetError
+from ipfacet.registry import default_dataset_manager
 
 
 def _manifest_json(manifest: object) -> str:
