@@ -23,15 +23,19 @@ class SyntheticAcquirer:
     definition: DatasetDefinition
     release: str = "v1"
     content: str = "valid"
-    integrity_value: str | None = None
+    source_integrity_value: str | None = None
+    source_integrity_verified: bool = False
 
     def acquire(self, destination: Path) -> AcquiredDataset:
         destination.joinpath("data.txt").write_text(self.content, encoding="utf-8")
         return AcquiredDataset(
             release=self.release,
             source="https://example.invalid/synthetic",
-            integrity_algorithm="sha256" if self.integrity_value is not None else None,
-            integrity_value=self.integrity_value,
+            source_integrity_algorithm=(
+                "sha256" if self.source_integrity_value is not None else None
+            ),
+            source_integrity_value=self.source_integrity_value,
+            source_integrity_verified=self.source_integrity_verified,
         )
 
 
@@ -106,15 +110,30 @@ def test_failed_update_never_replaces_active_snapshot(tmp_path: Path) -> None:
     assert not datasets.store.version_path("synthetic", "fixture", "v2").exists()
 
 
-def test_acquisition_checksum_failure_never_activates(tmp_path: Path) -> None:
-    acquirer = SyntheticAcquirer(definition(), integrity_value="0" * 64)
+def test_unverified_source_checksum_is_rejected_before_activation(tmp_path: Path) -> None:
+    acquirer = SyntheticAcquirer(definition(), source_integrity_value="0" * 64)
     datasets = manager(tmp_path, acquirer)
 
-    with pytest.raises(DatasetValidationError, match="checksum"):
+    with pytest.raises(ValueError, match="must be verified"):
         datasets.install("synthetic", "fixture")
 
     with pytest.raises(DatasetNotInstalledError):
         datasets.status("synthetic", "fixture")
+
+
+def test_verified_source_checksum_is_recorded_separately(tmp_path: Path) -> None:
+    acquirer = SyntheticAcquirer(
+        definition(),
+        source_integrity_value="a" * 64,
+        source_integrity_verified=True,
+    )
+    datasets = manager(tmp_path, acquirer)
+
+    manifest = datasets.install("synthetic", "fixture")
+
+    assert manifest.source_integrity_algorithm == "sha256"
+    assert manifest.source_integrity_value == "a" * 64
+    assert manifest.integrity_value != manifest.source_integrity_value
 
 
 def test_verify_detects_post_install_tampering(tmp_path: Path) -> None:
@@ -195,6 +214,8 @@ def test_manifest_contains_required_lifecycle_metadata(tmp_path: Path) -> None:
     assert raw["format"] == "text"
     assert raw["integrity"]["algorithm"] == "sha256"
     assert raw["integrity"]["value"] == manifest.integrity_value
+    assert raw["source_integrity"]["algorithm"] is None
+    assert raw["source_integrity"]["value"] is None
     assert raw["adapter_version"] == "1"
     assert raw["license_reference"] == "fixture-license"
     assert raw["retention"]["retain_previous_versions"] is True
