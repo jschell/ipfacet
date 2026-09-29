@@ -4,6 +4,6 @@ Plans currently being implemented live here.
 
 ## Active
 
-- [06 — Batch and DataFrame Performance](06-batch-dataframe-performance.md)
+No implementation plan is active. Plan 07 remains queued until the Plan 06 pull request is merged.
 
 A plan moves here from `../queue/` when implementation begins and moves to `../complete/` only after all exit criteria and CI checks pass.

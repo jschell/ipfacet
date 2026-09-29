@@ -1,6 +1,6 @@
 # Plan 06 — Batch and DataFrame Performance
 
-**Status:** Active  
+**Status:** Complete  
 **Depends on:** At least one real provider from Plans 03–05
 
 ## Objective
@@ -61,3 +61,15 @@ Do not force all formats through row-by-row Python calls.
 - 100k-unique-IP workload has documented time/memory results,
 - no persistent queried-IP cache is introduced,
 - CI correctness tests pass; large benchmarks may run separately.
+
+## Outcome
+
+Polars, Pandas, and PyArrow boundaries deduplicate canonical IPs before provider
+lookup and use native join/mapping/gather to reconstruct event rows. Synthetic
+benchmarks cover 1, 1k, 10k, and 100k unique IPs, a 250k-row/10k-unique case,
+both IP families, open/first/warm timing, memory, and join-back. The constrained
+Parquet IPv4 experiment demonstrates a potential vectorized path but does not
+replace the validated CSV reader. A same-release, licensed MMDB comparison is
+documented as future performance work. See `doc/batch-dataframes.md`.
+
+PR #7 CI passed: 109 tests, Ruff, strict Pyright, lock check, and build.
