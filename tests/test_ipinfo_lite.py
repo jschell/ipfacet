@@ -31,10 +31,7 @@ from ipfacet.providers.ipinfo_lite import (
     open_ipinfo_lite,
 )
 
-HEADER = (
-    "network,country,country_code,continent,continent_code,"
-    "asn,as_name,as_domain\n"
-)
+HEADER = "network,country,country_code,continent,continent_code,asn,as_name,as_domain\n"
 ROWS = (
     '1.1.1.0/24,Australia,AU,Oceania,OC,AS13335,"Example Edge, Inc.",example.test\n'
     "154.24.39.204/30,Canada,CA,North America,NA,AS174,"
