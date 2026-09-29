@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import csv
 import io
 import zipfile
 from dataclasses import dataclass
-from ipaddress import IPv6Address
+from ipaddress import IPv4Address, IPv6Address, ip_address
 from pathlib import Path
 
 import pytest
@@ -69,8 +70,6 @@ def row(
         last_seen,
     )
     output = io.StringIO()
-    import csv
-
     csv.writer(output, lineterminator="\n").writerow(values)
     return output.getvalue()
 
@@ -179,7 +178,7 @@ def test_px8_preserves_vendor_classification_as_metadata(tmp_path: Path) -> None
     )
     provider = IP2ProxyLitePX8Provider(path, version="fixture")
 
-    result = provider.lookup(__import__("ipaddress").ip_address("8.8.8.8"))
+    result = provider.lookup(ip_address("8.8.8.8"))
     metadata = {item.key: item.value for item in result.metadata}
 
     assert metadata == {
@@ -220,7 +219,7 @@ def test_px8_usage_traits_are_independent_factual_tags(tmp_path: Path) -> None:
     provider = IP2ProxyLitePX8Provider(path, version="fixture")
 
     for index, expected in enumerate(codes.values()):
-        address = __import__("ipaddress").IPv4Address(0x0A000001 + index)
+        address = IPv4Address(0x0A000001 + index)
         result = provider.lookup(address)
         assert result.traits == frozenset({expected})
 
@@ -398,7 +397,7 @@ def test_manual_import_opens_active_snapshot_offline(tmp_path: Path) -> None:
     )
 
     provider = open_ip2proxy_lite(store)
-    result = provider.lookup(__import__("ipaddress").ip_address("1.1.1.1"))
+    result = provider.lookup(ip_address("1.1.1.1"))
 
     assert manifest.license_reference == "https://lite.ip2location.com/data-license"
     assert manifest.attribution is not None
