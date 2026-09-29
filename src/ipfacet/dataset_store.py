@@ -193,7 +193,11 @@ class DatasetStore:
         self.write_manifest(path, activated)
         pointer = self.dataset_root(manifest.provider, manifest.dataset) / "active.json"
         pointer.parent.mkdir(parents=True, exist_ok=True)
-        descriptor, temp_name = tempfile.mkstemp(prefix="active-", suffix=".json", dir=pointer.parent)
+        descriptor, temp_name = tempfile.mkstemp(
+            prefix="active-",
+            suffix=".json",
+            dir=pointer.parent,
+        )
         temp = Path(temp_name)
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
