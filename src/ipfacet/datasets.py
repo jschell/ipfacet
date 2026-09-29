@@ -75,7 +75,9 @@ class AcquiredDataset:
         if (self.source_integrity_algorithm is None) != (self.source_integrity_value is None):
             raise ValueError("source integrity algorithm and value must be supplied together")
         if self.source_integrity_algorithm is not None and not self.source_integrity_verified:
-            raise ValueError("source integrity metadata must be verified before acquisition returns")
+            raise ValueError(
+                "source integrity metadata must be verified before acquisition returns"
+            )
 
 
 @dataclass(frozen=True, slots=True)
