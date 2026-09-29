@@ -177,13 +177,16 @@ def test_air_gapped_import_works_without_acquirer(tmp_path: Path) -> None:
     source = tmp_path / "airgap"
     source.mkdir()
     source.joinpath("data.txt").write_text("valid", encoding="utf-8")
+    registered = definition()
     datasets = DatasetManager(
         store=DatasetStore(tmp_path / "store"),
+        definitions=(registered,),
         validators={("synthetic", "fixture"): SyntheticValidator()},
     )
 
     manifest = datasets.import_dataset(
-        definition(),
+        "synthetic",
+        "fixture",
         source,
         release="offline-1",
         source_reference="removable-media",
