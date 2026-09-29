@@ -243,9 +243,7 @@ def test_px8_supports_native_ipv6(tmp_path: Path) -> None:
     )
     provider = IP2ProxyLitePX8Provider(path, version="ipv6")
 
-    result = open_database(providers=(provider,), policy=policy()).lookup(
-        "2606:4700:4700::1111"
-    )
+    result = open_database(providers=(provider,), policy=policy()).lookup("2606:4700:4700::1111")
 
     assert result.asn.value == 13335
     assert result.country_code.value == "US"
@@ -329,16 +327,12 @@ def test_acquirer_uses_account_code_without_persisting_credentials(tmp_path: Pat
     manager = DatasetManager(
         store=DatasetStore(tmp_path),
         acquirers=(acquirer,),
-        validators={
-            (IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET): IP2ProxyLiteValidator()
-        },
+        validators={(IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET): IP2ProxyLiteValidator()},
     )
 
     manifest = manager.install(IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET)
 
-    assert transport.seen_url == (
-        f"{IP2PROXY_LITE_DOWNLOAD_URL}?token={token}&file={code}"
-    )
+    assert transport.seen_url == (f"{IP2PROXY_LITE_DOWNLOAD_URL}?token={token}&file={code}")
     assert manifest.release.startswith("2026-09-29-")
     assert manifest.source == IP2PROXY_LITE_DOWNLOAD_URL
     manifest_text = (
@@ -385,9 +379,7 @@ def test_manual_import_opens_active_snapshot_offline(tmp_path: Path) -> None:
     manager = DatasetManager(
         store=store,
         definitions=(IP2PROXY_LITE_DEFINITION,),
-        validators={
-            (IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET): IP2ProxyLiteValidator()
-        },
+        validators={(IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET): IP2ProxyLiteValidator()},
     )
     manifest = manager.import_dataset(
         IP2PROXY_LITE_PROVIDER,
