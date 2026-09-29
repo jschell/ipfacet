@@ -4,6 +4,10 @@ IPFacet is a provider-neutral Python library for **local, offline IP address enr
 
 Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normalized factual network and geographic context with field-level provenance. IPFacet does **not** assign maliciousness, reputation, or threat scores.
 
+## Status
+
+IPFacet is pre-alpha. Plan 00 establishes the canonical API and local IP classification; real reference-data providers are implemented in later plans.
+
 ## Goals
 
 - Offline lookup after datasets are installed.
@@ -14,70 +18,58 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 - Keep acquisition/update logic separate from lookup logic.
 - Support IPv4 and IPv6.
 - Make batch enrichment efficient for SIEM-scale workflows.
-- Support Polars first, with Pandas and PyArrow at the public boundary.
+- Support Polars first, with Pandas and PyArrow at the public boundary in the batch plan.
 - Keep provider datasets and credentials out of the repository.
 
-## Intended data
+## Install for development
 
-Initial provider targets are:
+Python 3.12+ and [uv](https://docs.astral.sh/uv/) are required.
 
-- IPinfo Lite for ASN, AS organization/domain, country, and continent context.
-- IP2Proxy LITE for network/proxy/usage classifications where licensing and free-tier capabilities permit.
-- MaxMind GeoLite2 as an independent ASN/geography provider and fallback/reference implementation.
+```bash
+uv sync --frozen
+uv run --frozen pytest
+```
 
-Future providers may include routing/RIR-derived sources where they add semantics not represented by the initial providers.
+The committed `uv.lock` is the dependency source of truth for reproducible development and CI.
 
-## Canonical model
-
-IPFacet will normalize factual observations such as:
-
-- IP scope and special-purpose classification
-- origin/network ASN where supported by provider semantics
-- AS organization and domain
-- network/prefix
-- country/continent and optional region/city
-- ISP
-- network traits such as hosting, CDN, residential, mobile, business, education, government, VPN, proxy, and Tor
-- field-level provider, dataset, and dataset-version provenance
-
-Provider disagreement is preserved. A configured field-specific precedence policy selects a convenient resolved value without discarding alternative observations.
-
-## Explicit non-goals
-
-IPFacet is not a threat-intelligence or reputation platform. V1 does not include:
-
-- malicious-IP scoring
-- vendor risk scores as canonical facts
-- IOC feeds
-- VirusTotal, AbuseIPDB, GreyNoise, or similar online reputation APIs
-- DNS/rDNS enrichment
-- persistent histories of queried IP addresses
-- background daemons or schedulers
-
-## Dataset lifecycle
-
-Reference datasets are not bundled in the Python package. Dataset helpers may download or import provider data, validate it, record provenance and licensing metadata, and atomically activate a validated version.
-
-Credentials remain external to IPFacet configuration. Air-gapped/manual imports are first-class.
-
-Provider-specific retention requirements must be enforced; historical snapshots are never assumed to be legally retainable indefinitely.
-
-## Planned API
+## Current API
 
 ```python
 import ipfacet
 
 db = ipfacet.open_database()
+result = db.lookup("192.0.2.10")
 
+assert result.scope is ipfacet.IPScope.DOCUMENTATION
+```
+
+Plan 00 works without any external dataset and classifies IP scope locally. The canonical model includes typed field state, selected provenance, all contributing observations, and explicit conflict representation. Plan 01 adds provider capabilities and deterministic cross-provider resolution.
+
+Planned provider-backed use remains:
+
+```python
+db = ipfacet.open_database()
 result = db.lookup("1.1.1.1")
 results = db.lookup_many(["1.1.1.1", "8.8.8.8"])
 ```
 
-Batch enrichment will deduplicate source IPs before lookup and join normalized results back to caller data.
+## Canonical semantics
 
-## Development
+Fields distinguish `PRESENT`, `NOT_FOUND`, `UNSUPPORTED`, `CONFLICT`, and `LOOKUP_ERROR`. Agreement among providers is not converted into invented statistical confidence.
 
-The project targets Python 3.12+ and uses `uv` as the dependency and environment manager.
+Network characteristics are modeled as independent traits such as hosting, CDN, VPN, proxy, and Tor rather than a single mutually exclusive vendor category. These are contextual facts, not maliciousness findings.
+
+## Explicit non-goals
+
+IPFacet is not a threat-intelligence or reputation platform. V1 does not include malicious-IP scoring, vendor risk scores as canonical facts, IOC feeds, online reputation APIs, DNS/rDNS enrichment, persistent histories of queried IP addresses, or background schedulers.
+
+## Dataset lifecycle
+
+Reference datasets are not bundled in the Python package. Later plans add helpers to download or import provider data, validate it, record provenance/licensing metadata, and atomically activate a validated version. Credentials remain external to IPFacet configuration and air-gapped/manual imports are first-class.
+
+## Development workflow
+
+The project targets Python 3.12+ and uses `uv`, Ruff, strict Pyright, and pytest. Read [AGENTS.md](AGENTS.md) before making changes.
 
 Plans are tracked under:
 
@@ -88,4 +80,4 @@ doc/plan/
 └── queue/
 ```
 
-Read [AGENTS.md](AGENTS.md) before making changes. Architecture and roadmap context are in [doc/overview.md](doc/overview.md).
+Architecture and roadmap context are in [doc/overview.md](doc/overview.md).
