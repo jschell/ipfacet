@@ -67,7 +67,12 @@ def test_two_providers_contribute_different_canonical_fields() -> None:
     asn = provider(
         "asn_source",
         {Capability.ASN},
-        ProviderObservation(CanonicalField.ASN, FieldState.PRESENT, 13335, semantics="BGP origin ASN"),
+        ProviderObservation(
+            CanonicalField.ASN,
+            FieldState.PRESENT,
+            13335,
+            semantics="BGP origin ASN",
+        ),
     )
     geo = provider(
         "geo_source",
