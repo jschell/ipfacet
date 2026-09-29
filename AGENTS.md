@@ -57,6 +57,8 @@ Move a plan to `complete` only when all exit criteria are satisfied and CI passe
 - Credentials should come from environment variables or explicitly supported external credential mechanisms.
 - Dataset installers must record source, version/release, acquisition time, integrity information where available, format, and relevant license/attribution metadata.
 - Provider-specific retention restrictions override generic snapshot retention.
+- GeoLite superseded-release destruction is an operator responsibility under Plan 05;
+  the software documents the deadline and does not delete those releases automatically.
 - Updates must be staged and validated before atomic activation.
 - A failed update must leave the previously active dataset usable.
 - Manual/air-gapped dataset import must remain supported.

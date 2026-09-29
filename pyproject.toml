@@ -1,6 +1,6 @@
 [project]
 name = "ipfacet"
-version = "0.1.0.dev0"
+version = "1.0.0rc1"
 description = "Provider-neutral offline IP address enrichment with provenance"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -8,7 +8,7 @@ license = { text = "MIT" }
 authors = [{ name = "IPFacet contributors" }]
 keywords = ["ip", "asn", "network", "enrichment", "offline"]
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 4 - Beta",
   "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.12",
