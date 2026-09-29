@@ -80,9 +80,7 @@ class ProviderResolver:
             raise ValueError("at least one provider is required")
         names = [provider.identity.provider for provider in providers]
         if len(names) != len(set(names)):
-            raise ValueError(
-                "only one selected version per provider may participate in a lookup"
-            )
+            raise ValueError("only one selected version per provider may participate in a lookup")
         self._providers = {provider.identity.provider: provider for provider in providers}
         self._policy = policy
         self._validate_policy()
@@ -247,9 +245,7 @@ class ProviderResolver:
                 for result, observation in present
                 if observation.value is not None
             )
-            conflict = any(
-                observation.value != selected_value for _, observation in present[1:]
-            )
+            conflict = any(observation.value != selected_value for _, observation in present[1:])
             fallback = statuses[0].state is not FieldState.PRESENT if statuses else False
             if conflict:
                 state = FieldState.CONFLICT
