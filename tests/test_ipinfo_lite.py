@@ -240,8 +240,9 @@ def test_manual_import_opens_active_snapshot_fully_offline(tmp_path: Path) -> No
     assert manifest.license_reference == "CC-BY-SA-4.0"
     assert manifest.attribution is not None
     assert "IPinfo" in manifest.attribution
-    assert result.observation(CanonicalField.ASN) is not None
-    assert result.observation(CanonicalField.ASN).value == 13335
+    observation = result.observation(CanonicalField.ASN)
+    assert observation is not None
+    assert observation.value == 13335
 
 
 def test_provider_does_not_claim_paid_lite_capabilities() -> None:
