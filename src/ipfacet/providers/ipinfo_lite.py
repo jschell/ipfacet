@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from email.utils import parsedate_to_datetime
 from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network, ip_network
 from pathlib import Path
-from typing import Protocol, cast
+from typing import Protocol
 
 from ipfacet.dataset_store import DatasetStore
 from ipfacet.datasets import AcquiredDataset, DatasetDefinition, DatasetManifest, RetentionPolicy
@@ -49,7 +49,7 @@ IPINFO_LITE_DEFINITION = DatasetDefinition(
     license_reference=IPINFO_LITE_LICENSE,
     attribution=IPINFO_LITE_ATTRIBUTION,
     retention=RetentionPolicy(retain_previous_versions=True),
-    stale_after_days=2,
+    stale_after_days=1,
 )
 
 
