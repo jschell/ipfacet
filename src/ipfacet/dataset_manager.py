@@ -30,10 +30,11 @@ class DatasetManager:
         validators: Mapping[tuple[str, str], DatasetValidator] | None = None,
     ) -> None:
         self.store = store or DatasetStore()
+        registered = tuple(acquirers)
         self._acquirers = {
-            (item.definition.provider, item.definition.dataset): item for item in acquirers
+            (item.definition.provider, item.definition.dataset): item for item in registered
         }
-        if len(self._acquirers) != len(tuple(acquirers)):
+        if len(self._acquirers) != len(registered):
             raise ValueError("duplicate dataset acquirer registration")
         self._validators = dict(validators or {})
 
@@ -172,7 +173,7 @@ class DatasetManager:
         if validator is not None:
             validator.validate(staged, manifest)
         self.store.write_manifest(staged, manifest)
-        committed = self.store.commit_staged(staged, manifest)
+        self.store.commit_staged(staged, manifest)
         try:
             activated = self.store.activate(manifest)
         except Exception:
