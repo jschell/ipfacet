@@ -6,7 +6,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import replace
 from typing import Protocol
 
-from ipfacet.models import IPAddress, IPEnrichment, IPScope
+from ipfacet.models import IPAddress, IPEnrichment
 from ipfacet.provider import EnrichmentProvider
 from ipfacet.resolution import ProviderResolver, ResolutionPolicy
 from ipfacet.scope import classify_scope, parse_ip
