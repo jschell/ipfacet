@@ -248,3 +248,27 @@ def test_unsafe_release_is_rejected(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="unsafe dataset path"):
         datasets.install("synthetic", "fixture")
+
+
+def test_activation_failure_leaves_previous_pointer_usable(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    acquirer = SyntheticAcquirer(definition())
+    datasets = manager(tmp_path, acquirer)
+    datasets.install("synthetic", "fixture")
+    original_activate = datasets.store.activate
+
+    acquirer.release = "v2"
+
+    def fail_v2(manifest: DatasetManifest) -> DatasetManifest:
+        if manifest.release == "v2":
+            raise OSError("simulated atomic pointer failure")
+        return original_activate(manifest)
+
+    monkeypatch.setattr(datasets.store, "activate", fail_v2)
+    with pytest.raises(OSError, match="simulated atomic pointer failure"):
+        datasets.update("synthetic", "fixture")
+
+    assert datasets.status("synthetic", "fixture").release == "v1"
+    assert not datasets.store.version_path("synthetic", "fixture", "v2").exists()
