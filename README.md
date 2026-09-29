@@ -7,6 +7,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 ## Status
 
 IPFacet is a V1 release candidate (`1.0.0rc1`). It provides offline adapters for IPinfo Lite, IP2Proxy LITE PX8, and MaxMind GeoLite2 ASN, plus batch DataFrame enrichment. See the [public API](doc/public-api.md), [changelog](CHANGELOG.md), and [compatibility policy](doc/compatibility.md).
+The [operator release validation](doc/release-validation.md) records the remaining opt-in licensed-dataset gate before a final release decision.
 
 ## Goals
 
