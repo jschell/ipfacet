@@ -1,6 +1,6 @@
 # Plan 02 — Dataset Acquisition and Lifecycle
 
-**Status:** Queue  
+**Status:** Complete  
 **Depends on:** Plans 00–01
 
 ## Objective
@@ -78,3 +78,35 @@ Use local synthetic archives and mock acquisition endpoints. CI must not require
 - air-gapped import works,
 - credentials never enter manifests/logs/config by default,
 - CI passes.
+
+
+## Completion record
+
+Completed after the final frozen-lock CI run passed.
+
+Implemented and validated:
+
+- acquisition protocol remains separate from offline lookup providers,
+- provider dataset definitions are registered independently from download acquirers, allowing manual-only support,
+- platform-appropriate per-user data roots,
+- immutable version directories with staged validation and atomic active-pointer replacement,
+- credential-free manifests with release, source, timestamps, format, local snapshot SHA-256, adapter version, license/attribution, retention, and staleness metadata,
+- verified provider/source checksum metadata is recorded separately from the installed-tree hash,
+- provider schema/smoke validation hooks,
+- failed validation and failed activation leave the prior active snapshot usable,
+- provider retention restrictions control snapshot destruction and rollback availability,
+- manual/air-gapped import uses registered provider policy and the same validation path,
+- symlinks are rejected from snapshot trees,
+- environment-only credential discovery helper,
+- `datasets available/list/status/install/import/update/verify/rollback` CLI,
+- real-provider automated downloads remain gated on provider-specific terms research.
+
+Validation:
+
+- `uv sync --frozen --dev` — pass
+- `uv lock --check` — pass
+- Ruff lint — pass
+- Ruff format — pass
+- strict Pyright — 0 errors, 0 warnings
+- pytest — 65 passed
+- `uv build` — pass

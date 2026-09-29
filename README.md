@@ -6,7 +6,7 @@ Its purpose is deliberately narrow: given an IPv4 or IPv6 address, return normal
 
 ## Status
 
-IPFacet is pre-alpha. Plans 00–01 establish the canonical API, provider capabilities, and deterministic multi-provider resolution. Real reference-data providers are implemented in later plans.
+IPFacet is pre-alpha. Plans 00–02 establish the canonical API, provider resolution, and safe local dataset lifecycle. Real reference-data providers are implemented in later plans.
 
 ## Goals
 
@@ -83,7 +83,9 @@ IPFacet is not a threat-intelligence or reputation platform. V1 does not include
 
 ## Dataset lifecycle
 
-Reference datasets are not bundled in the Python package. Later plans add helpers to download or import provider data, validate it, record provenance/licensing metadata, and atomically activate a validated version. Credentials remain external to IPFacet configuration and air-gapped/manual imports are first-class.
+Reference datasets are not bundled in the Python package. `DatasetManager` stages and validates snapshots before activation, records credential-free provenance/licensing manifests, verifies local SHA-256 integrity, enforces provider retention constraints, supports verified rollback, and treats manual/air-gapped imports as first-class.
+
+The CLI exposes `ipfacet datasets available/list/status/install/import/update/verify/rollback`. Real-provider automated downloads remain disabled until each provider plan documents authentication, automation permission, download limits, attribution, redistribution, retention/destruction, and old-snapshot rules. See [doc/dataset-lifecycle.md](doc/dataset-lifecycle.md).
 
 ## Development workflow
 

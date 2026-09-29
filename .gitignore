@@ -216,3 +216,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# IPFacet local reference-data stores
+/datasets/
+/ipfacet-data/
