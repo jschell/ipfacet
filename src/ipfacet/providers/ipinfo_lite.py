@@ -163,7 +163,7 @@ class _CSVRecord:
     as_domain: str | None
 
 
-class _NetworkOffsets:
+class NetworkOffsets:
     """Compact network-to-line-offset index built from an immutable CSV snapshot."""
 
     def __init__(self) -> None:
@@ -244,8 +244,8 @@ class IPinfoLiteCSVProvider:
         )
         self._index = self._build_index()
 
-    def _build_index(self) -> _NetworkOffsets:
-        index = _NetworkOffsets()
+    def _build_index(self) -> NetworkOffsets:
+        index = NetworkOffsets()
         try:
             with self._path.open("rb") as handle:
                 header = handle.readline().decode("utf-8-sig").rstrip("\r\n")

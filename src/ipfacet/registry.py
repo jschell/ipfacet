@@ -18,16 +18,24 @@ from ipfacet.providers.ipinfo_lite import (
     IPinfoLiteAcquirer,
     IPinfoLiteValidator,
 )
+from ipfacet.providers.maxmind_geolite2 import (
+    MAXMIND_DATASET,
+    MAXMIND_DEFINITION,
+    MAXMIND_PROVIDER,
+    MaxMindGeoLite2Acquirer,
+    MaxMindGeoLite2Validator,
+)
 
 
 def default_dataset_manager(*, store: DatasetStore | None = None) -> DatasetManager:
     """Return a manager with built-in provider policy/acquisition registrations."""
     return DatasetManager(
         store=store,
-        definitions=(IPINFO_LITE_DEFINITION, IP2PROXY_LITE_DEFINITION),
-        acquirers=(IPinfoLiteAcquirer(), IP2ProxyLiteAcquirer()),
+        definitions=(IPINFO_LITE_DEFINITION, IP2PROXY_LITE_DEFINITION, MAXMIND_DEFINITION),
+        acquirers=(IPinfoLiteAcquirer(), IP2ProxyLiteAcquirer(), MaxMindGeoLite2Acquirer()),
         validators={
             (IPINFO_LITE_PROVIDER, IPINFO_LITE_DATASET): IPinfoLiteValidator(),
             (IP2PROXY_LITE_PROVIDER, IP2PROXY_LITE_DATASET): IP2ProxyLiteValidator(),
+            (MAXMIND_PROVIDER, MAXMIND_DATASET): MaxMindGeoLite2Validator(),
         },
     )
