@@ -61,13 +61,10 @@ Manual import does not require a registered acquisition helper:
 
 ```bash
 ipfacet datasets import provider dataset /media/dataset \
-  --release 2026-09 \
-  --format mmdb \
-  --adapter-version 1 \
-  --license-reference provider-license
+  --release 2026-09
 ```
 
-The imported directory goes through the same staging, hashing, validation, manifest, and activation path as downloaded data.
+The provider/dataset definition must already be registered, even when no download acquirer is registered. This makes manual-only support possible while ensuring license, attribution, staleness, and retention rules come from provider code rather than user-supplied generic CLI flags. The imported directory then goes through the same staging, hashing, validation, manifest, and activation path as downloaded data.
 
 ## CLI
 
